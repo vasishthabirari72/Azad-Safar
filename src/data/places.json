@@ -1,0 +1,44 @@
+{
+  "places": [
+    {
+      "id": 1,
+      "title": "Taj Mahal",
+      "location": "Agra",
+      "state": "Uttar Pradesh",
+      "rating": 4.8,
+      "category": ["high-rated", "recommended"],
+      "image": "/images/taj_mahal.jpg",
+      "description": "One of the Seven Wonders of the World, known for its stunning white marble architecture."
+    },
+    {
+      "id": 2,
+      "title": "Gateway of India",
+      "location": "Mumbai",
+      "state": "Maharashtra",
+      "rating": 4.6,
+      "category": ["high-rated"],
+      "image": "/images/gateway_india.jpg",
+      "description": "An iconic arch-monument located on the waterfront in South Mumbai."
+    },
+    {
+      "id": 3,
+      "title": "Munnar",
+      "location": "Idukki",
+      "state": "Kerala",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "/images/munnar.jpg",
+      "description": "A beautiful hill station known for tea plantations, lush greenery, and cool weather."
+    },
+    {
+      "id": 4,
+      "title": "Ziro Valley",
+      "location": "Lower Subansiri",
+      "state": "Arunachal Pradesh",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "/images/ziro_valley.jpg",
+      "description": "A serene valley surrounded by pine-covered hills, home to the Apatani tribe."
+    }
+  ]
+}
