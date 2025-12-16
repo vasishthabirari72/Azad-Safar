@@ -1,0 +1,100 @@
+{
+  "places": [
+    {
+      "id": 1,
+      "title": "Taj Mahal",
+      "location": "Agra, Uttar Pradesh",
+      "rating": 4.8,
+      "category": ["high-rated", "recommended"],
+      "image": "images/Taj Mahal.jpg"
+    },
+    {
+      "id": 2,
+      "title": "Gateway of India",
+      "location": "Mumbai, Maharashtra",
+      "rating": 4.6,
+      "category": ["high-rated"],
+      "image": "/images/Gate way of india.JPG"
+    },
+    {
+      "id": 3,
+      "title": "Munnar",
+      "location": "Kerala",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "images/munar.jpg"
+    },
+    {
+      "id": 4,
+      "title": "Ziro Valley",
+      "location": "Arunachal Pradesh",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "images/ziro valley.jpg"
+    },
+    {
+      "id": 5,
+      "title": "Jaipur",
+      "location": "Rajasthan",
+      "rating": 4.6,
+      "category": ["recommended"],
+      "image": "/images/jaipur.jpg"
+    },
+    {
+      "id": 6,
+      "title": "Varanasi",
+      "location": "Uttar Pradesh",
+      "rating": 4.7,
+      "category": ["high-rated", "recommended"],
+      "image": "images/Varansai.jpg"
+    },
+    {
+      "id": 7,
+      "title": "Leh Ladakh",
+      "location": "Ladakh",
+      "rating": 4.9,
+      "category": ["high-rated"],
+      "image": "images/Leh ladhak.jpg"
+    },
+    {
+      "id": 8,
+      "title": "Hampi",
+      "location": "Karnataka",
+      "rating": 4.6,
+      "category": ["hidden-gem"],
+      "image": "/images/hampi.jpg"
+    },
+    {
+      "id": 9,
+      "title": "Spiti Valley",
+      "location": "Himachal Pradesh",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "images/spiti valley.jpg"
+    },
+    {
+      "id": 10,
+      "title": "Udaipur",
+      "location": "Rajasthan",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "/images/udaipur.jpg"
+    },
+    {
+      "id": 11,
+      "title": "Rishikesh",
+      "location": "Uttarakhand",
+      "rating": 4.5,
+      "category": ["recommended"],
+      "image": "images/Rishkiesh.jpg"
+    },
+    {
+      "id": 12,
+      "title": "Andaman Islands",
+      "location": "Andaman & Nicobar",
+      "rating": 4.8,
+      "category": ["high-rated"],
+      "image": "images/andaman islands.jpg"
+    }
+  ]
+}

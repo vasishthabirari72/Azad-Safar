@@ -5,7 +5,8 @@ import './App.css'
 import Navabar from './navabar.jsx'
 import HeroSection from './hero-section.jsx'
 import Body from './body.jsx' 
-import Footer from './footer.jsx' 
+import Footer from './footer.jsx'
+ 
 
 function App() {
   const [count, setCount] = useState(0)

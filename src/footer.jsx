@@ -5,7 +5,7 @@ function Footer(){
             <div className="quickies">
                 <a href="#">Home</a>
                 <a href="#">Explore By Category</a>
-                <a href="#">Travel patner</a>
+                <a href="#">Travel partner</a>
                 <a href="#">Tourist-Guide MarketPlace</a>
                 <a href="#">State to travel</a>
             </div>

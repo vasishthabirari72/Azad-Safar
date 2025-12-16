@@ -1,20 +1,14 @@
-import React from "react";
-
-
-export default function Card({ places }) {
-  const { title, location, rating, image, description } = places;
-
-
+function Card({ place }) {
   return (
-   
-    <article className="card"  aria-label={title}>
-     <img src={image} alt={title} className="card-image" loading="lazy"/>
-    <h2 className="title">{title}</h2>
-    
-    <p className="location">{location}</p>
-    <div className="rating">{rating}</div>
-    <p className="description">{description}</p>
-    
-    </article>
+    <div className="card has-overlay">
+      <img
+        src={place.image}
+        alt={place.title}
+        loading="lazy"
+      />
+      <h3 className="card-title">{place.title}</h3>
+    </div>
   );
 }
+
+export default Card;

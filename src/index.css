@@ -201,21 +201,26 @@ body {
 }
 .Hero{
   background-color: aqua;
-  height:32rem;
+  height:44rem;
   padding-top: 6rem;
   display: block;
   background-image: url("hero-section.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  margin: 0;
 
 }
 .Hero h1{
   font-size: 6rem;
   display: inline-block;
   line-height: 1.2;
-
-  
+  background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  cursor: pointer;
+  letter-spacing: -0.5px;
   margin-bottom:0rem ;
 }
 .Hero h3{
@@ -265,4 +270,297 @@ body {
   transform: scale(1.05);
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
 }
+/* ===== CARD ===== */
+.card {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+
+  background: #355f85;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* Image */
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* ✅ correct */
+  display: block;
+  z-index: 0;
+}
+
+/* Gradient overlay (ONLY if card has overlay) */
+.card.has-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.6),
+    rgba(0,0,0,0.2),
+    transparent
+  );
+  z-index: 1;
+}
+
+/* Title */
+.card-title {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  z-index: 2;
+
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.55);
+  padding: 6px 12px;
+  border-radius: 8px;
+
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+
+
+.recommended-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+  gap: 20px;
+}
+
+/* ===== Body Section ===== */
+
+
+/* Section Headings */
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 1rem 0 1.5rem;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 16px;
+  color: #0f172a;
+}
+
+/* Card Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2rem;
+}
+
+/* Spacing between sections */
+.body-section > .section-title:first-child {
+  margin-top: 0;
+}
+/* Card Box */
+
+.card-title {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  z-index: 2;
+
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+
+  background: rgba(0, 0, 0, 0.55);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* Hover effect */
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* Place Title */
+.card h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #020617;
+}
+/* Body Section */
+.Body-section {
+  width: 100%;
+  padding: 10px 8%;
+  background-color: #ffffff;
+}
+
+
+/* Card Container */
+.img-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  align-items: stretch;
+}
+/* See More Button */
+.see-more-btn {
+  margin-top: 20px;
+  padding: 10px 22px;
+
+  border: none;
+  border-radius: 20px;
+
+  background-color: #0f172a;
+  color:#172c5d;
+  font-size: 14px;
+  font-weight: 500;
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.show-more-btn button{
+color:white;
+ background-color: #172c5d;
+}
+
+/* Hover effect */
+.see-more-btn:hover {
+  background-color: #1e293b;
+  transform: scale(1.05);
+}
+.show-more-btn {
+  display: block;
+  margin: 2.5rem auto 0;
+  padding: 0.75rem 2.2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: black;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+  width:10rem;
+}
+
+/* Hover */
+.show-more-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.45);
+}
+
+/* Click */
+.show-more-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+}
+
+/* Focus (accessibility) */
+.show-more-btn:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 4px;
+}
+/* Footer Container */
+.foot {
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #e5e7eb;
+  padding: 60px 8% 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;     /* ⭐ horizontal center */
+  text-align: center;    
+}
+
+/* Brand Heading */
+.foot-head {
+  font-size: 32px;
+  font-weight: 700;
+  color: #38bdf8;
+  letter-spacing: 1px;
+}
+
+/* Quick Links */
+.quickies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 32px;
+  text-align: center;
+   justify-content: center;
+}
+
+.quickies a {
+  text-decoration: none;
+  color: #cbd5f5;
+  font-size: 15px;
+  transition: color 0.3s ease;
+}
+
+.quickies a:hover {
+  color: #38bdf8;
+}
+
+/* Contact Section */
+.Contact {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #d1d5db;
+}
+
+.Contact p {
+  margin: 4px 0;
+}
+
+/* Tagline */
+.foot h2 {
+  font-size: 18px;
+  font-weight: 500;
+  color: #f8fafc;
+  margin-top: 10px;
+  max-width: 600px;
+  text-align: center;
+}
+
+/* Footer Bottom */
+.footer-bottom {
+  border-top: 1px solid #1e293b;
+  padding-top: 16px;
+  font-size: 14px;
+  color: #9ca3af;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .foot {
+    padding: 40px 6% 20px;
+    gap: 24px;
+  }
+
+  .quickies {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .foot-head {
+    font-size: 26px;
+  }
+
+  .foot h2 {
+    font-size: 16px;
+  }
+}
+section {
+  margin-bottom: 24px;
+}
+
+
+
+
 

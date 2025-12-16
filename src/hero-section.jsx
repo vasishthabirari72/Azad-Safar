@@ -1,8 +1,8 @@
 function HeroSection(){
     return(
     <section className="Hero">
-            <h1>Azad Safar</h1>
-            <h3>Be Azad with Azad Safar</h3>
+            <h1>Azaad Safar</h1>
+            <h3>Be Azaad with Azad Safar</h3>
         
      <div className="search-wrapper">
         <input
