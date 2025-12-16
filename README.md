@@ -1,3 +1,59 @@
+# Azad Safar 🌍✈️
+
+**Azad Safar** is a travel-focused web platform designed to help travelers discover destinations, connect with fellow travelers, and explore hidden gems with freedom and confidence.
+
+The project aims to evolve into a **social platform for travelers**, where users can explore places, find travel partners, and connect with local guides.
+
+---
+
+## 🚀 Features (Current)
+
+- 🧭 Clean and modern **Navbar**
+- 🌄 Visually appealing **Hero section** with background image
+- 🔍 Search bar for discovering travel destinations
+- 🎨 Responsive and minimal UI design
+- ⚙️ Built using reusable React components
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React (Vite)
+- **Styling:** CSS (custom, no frameworks)
+- **Version Control:** Git & GitHub
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+ ├── components/
+ │    ├── Navbar.jsx
+ │    ├── HeroSection.jsx
+ │    ├── Body.jsx
+ │    ├── Footer.jsx
+ │    └── Card.jsx
+ ├── App.jsx
+ ├── main.jsx
+ └── index.css
+🎯 Purpose of This Project
+
+This project is being developed as:
+A learning project for frontend & React development
+A portfolio project for internships and placements
+A foundation for a future full-stack travel platform
+
+Developer: Vasishtha Birari
+
+
+
+
+
+
+
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
