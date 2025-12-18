@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
 function Card({ place }) {
   return (
+    <Link className="card-link" to={`./place/${place.id}`}>
     <div className="card has-overlay">
       <img
         src={place.image}
@@ -8,6 +10,8 @@ function Card({ place }) {
       />
       <h3 className="card-title">{place.title}</h3>
     </div>
+    </Link>
+    
   );
 }
 

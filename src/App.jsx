@@ -6,20 +6,24 @@ import Navabar from './navabar.jsx'
 import HeroSection from './hero-section.jsx'
 import Body from './body.jsx' 
 import Footer from './footer.jsx'
- 
+import { Route, Routes } from 'react-router-dom'
+import PlaceDetails from './placeDetails.jsx'
+import Home from "./home.jsx";
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <Navabar /> 
-      <HeroSection />
-      <Body />
+      <Navabar />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/place/:id" element={<PlaceDetails />} />
+      </Routes>
+
       <Footer />
-     
     </>
-  )
+  );
 }
 
 export default App;
