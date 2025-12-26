@@ -1,0 +1,373 @@
+{
+  "places": [
+    {
+      "id": 1,
+      "title": "Taj Mahal",
+      "location": "Agra, Uttar Pradesh",
+      "rating": 4.8,
+      "category": ["high-rated", "recommended"],
+      "image": "/images/Taj Mahal.jpg",
+      "image2":"/images2/Tajmahal_02.jpg",
+      "description": "Standing as a sublime testament to the Mughal Empire's architectural zenith, the Taj Mahal was commissioned in 1632 by Emperor Shah Jahan. Beyond its romantic origins as a tomb for his beloved wife, Mumtaz Mahal, the structure is a mathematical marvel of perfect symmetry. It took approximately 20,000 artisans and 22 years to complete, utilizing white marble brought from Makrana. The walls are intricately inlaid with semi-precious stones using the pietra dura technique, and the four minarets were intentionally tilted slightly outward to ensure that, in the event of an earthquake, they would fall away from the main tomb..",
+      "nearbyPlaces": [
+  {
+    "id": "ag-n1",
+    "title": "Fatehpur Sikri",
+    "distance": "40 km",
+    "travelTime": "1 hr",
+    "type": "Heritage",
+    "image": "/images/Fatehpur Sikri.jpg",
+    "description": "A UNESCO World Heritage Site built by Emperor Akbar, showcasing Indo-Islamic architecture and Mughal urban planning."
+  },
+  {
+    "id": "ag-n2",
+    "title": "Mathura",
+    "distance": "60 km",
+    "travelTime": "1.5 hrs",
+    "type": "Spiritual",
+    "image": "/images/mathura.jpg",
+    "description": "Birthplace of Lord Krishna and a major pilgrimage center with ancient temples and ghats."
+  }
+]
+
+    },
+    {
+      "id": 2,
+      "title": "Gateway of India",
+      "location": "Mumbai, Maharashtra",
+      "rating": 4.6,
+      "category": ["high-rated"],
+      "image": "/images/Gate way of india.JPG",
+      "image2":"/images2/Gate_way_of-_India.JPG",
+      "description": "This monumental archway was erected to commemorate the landing of King George V and Queen Mary in 1911—the first visit by a reigning British monarch to India. Designed by architect George Wittet, it blends traditional Hindu and Muslim motifs with the Roman triumphal arch style. Ironically, while it was built to welcome British royalty, it also served as the symbolic exit point for the last British troops leaving India in 1948, marking the definitive end of colonial rule.",
+      "nearbyPlaces": [
+  {
+    "id": "mu-n1",
+    "title": "Elephanta Caves",
+    "distance": "11 km (ferry)",
+    "travelTime": "1 hr",
+    "type": "Heritage",
+    "image": "/images/Elephanta_caves_main_hall.jpg",
+    "description": "Rock-cut caves dating back to the 5th century, famous for the Trimurti sculpture of Lord Shiva."
+  },
+  {
+    "id": "mu-n2",
+    "title": "Alibaug",
+    "distance": "95 km",
+    "travelTime": "3 hrs",
+    "type": "Beach",
+    "image": "/images/alibaug.jpg",
+    "description": "A coastal town popular for beaches, water sports, and weekend getaways from Mumbai."
+  }
+]
+
+    },
+    {
+      "id": 3,
+      "title": "Munnar",
+      "location": "Kerala",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "/images/munar.jpg",
+      "image2":"/images2/munar.jpg",
+      "description": "Originally known as the High Range of Travancore, Munnar was developed in the late 19th century as a summer resort for the British Government in South India. The transformation of the landscape began when John Daniel Munro leased the land in 1877, eventually leading to the massive tea plantations owned by the Tata Group today. It remains home to the Eravikulam National Park, which protects the endangered Nilgiri Tahr.",
+      "nearbyPlaces": [
+  {
+    "id": "mn-n1",
+    "title": "Thekkady",
+    "distance": "90 km",
+    "travelTime": "3 hrs",
+    "type": "Wildlife",
+    "image": "/images/Landscape_Tekkady_Kerala_India.jpg",
+    "description": "Home to Periyar National Park, famous for elephants, boating, and spice plantations."
+  },
+  {
+    "id": "mn-n2",
+    "title": "Anamudi Peak",
+    "distance": "25 km",
+    "travelTime": "1 hr",
+    "type": "Adventure",
+    "image": "/images/Naikolli_Mala_near_Anamudi.jpg",
+    "description": "The highest peak in South India, located inside Eravikulam National Park."
+  }
+]
+
+    },
+    {
+      "id": 4,
+      "title": "Ziro Valley",
+      "location": "Arunachal Pradesh",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "/images/ziro valley.jpg",
+      "image2":"/images2/ziro valley.jpg",
+      "description":"Tucked away in the Lower Subansiri district, Ziro is the ancestral home of the Apatani tribe, a community renowned for their sophisticated ecological knowledge and unique wet rice cultivation system. Unlike other nomadic tribes, the Apatanis have practiced sedentary agriculture for centuries. The valley is a candidate for UNESCO World Heritage status due to the tribe's harmonious relationship with nature and their preserved cultural identity.",
+      "nearbyPlaces": [
+  {
+    "id": "zi-n1",
+    "title": "Daporijo",
+    "distance": "110 km",
+    "travelTime": "4 hrs",
+    "type": "Nature",
+    "image": "/images/Daporijo_Assembly_constituency_map.svg.png",
+    "description": "A scenic town known for rivers, suspension bridges, and tribal culture."
+  },
+  {
+    "id": "zi-n2",
+    "title": "Talley Valley Wildlife Sanctuary",
+    "distance": "32 km",
+    "travelTime": "1.5 hrs",
+    "type": "Wildlife",
+    "image": "/images/talley.jpg",
+    "description": "A protected forest reserve rich in biodiversity and untouched landscapes."
+  }
+]
+
+    },
+    {
+  "id": 5,
+  "title": "Jaipur",
+  "location": "Rajasthan",
+  "rating": 4.6,
+  "category": ["recommended"],
+  "image": "/images/jaipur.jpg",
+  "image2": "/images/jaipur.jpg",
+  "description": "Founded in 1727 by Maharaja Sawai Jai Singh II, Jaipur was India’s first planned city, designed according to the principles of Vastu Shastra. The city’s distinctive pink hue was not original; it was painted in 1876 to welcome the Prince of Wales, as pink was considered the color of hospitality. The Hawa Mahal (Palace of Winds), with its 953 small windows, was specifically designed to allow royal ladies to observe daily life and festivals in the street below without being seen themselves.",
+  "nearbyPlaces": [
+    {
+      "id": "jp-n1",
+      "title": "Ajmer",
+      "distance": "135 km",
+      "travelTime": "2.5–3 hrs",
+      "type": "Spiritual / Heritage",
+      "image": "/images/ajmer.jpg",
+      "description": "Ajmer is home to the revered Ajmer Sharif Dargah, the tomb of Sufi saint Khwaja Moinuddin Chishti. Founded in the 7th century, the city has long been a center of pilgrimage and cultural harmony."
+    },
+    {
+      "id": "jp-n2",
+      "title": "Pushkar",
+      "distance": "145 km",
+      "travelTime": "3 hrs",
+      "type": "Spiritual / Cultural",
+      "image": "/images/Pushkar,_India,_Pushkar_Lake.jpg",
+      "description": "Pushkar is one of the oldest cities in India and is famous for the Brahma Temple, one of the very few dedicated to Lord Brahma. The annual Pushkar Camel Fair attracts visitors from across the world."
+    },
+    {
+      "id": "jp-n3",
+      "title": "Alwar",
+      "distance": "150 km",
+      "travelTime": "3 hrs",
+      "type": "Wildlife / Forts",
+      "image": "/images/alwar.jpg",
+      "description": "Alwar is known for the Sariska Tiger Reserve and the historic Bala Quila (Alwar Fort). It served as a strategic military base during the Rajput and Mughal eras."
+    },
+    {
+      "id": "jp-n4",
+      "title": "Ranthambore National Park",
+      "distance": "180 km",
+      "travelTime": "4 hrs",
+      "type": "Wildlife",
+      "image": "/images/ranthambore.JPG",
+      "description": "Once the hunting grounds of Jaipur’s royal family, Ranthambore is now one of India’s most famous tiger reserves, combining dramatic ruins with rich wildlife."
+    }
+  ]
+},
+
+    {
+      "id": 6,
+      "title": "Varanasi",
+      "location": "Uttar Pradesh",
+      "rating": 4.7,
+      "category": ["high-rated", "recommended"],
+      "image": "/images/Varansai.jpg",
+      "image2":"/images2/varanasi.jpg",
+      "description": "Mark Twain once wrote that Varanasi is older than history, older than tradition, older even than legend. Known anciently as Kashi, it has been a center of learning and civilization for over 3,000 years. The city’s 84 ghats serve as the threshold between the physical and spiritual worlds. Historically, it was the site where Lord Buddha gave his first sermon at nearby Sarnath around 528 BCE, cementing the city's status as a crossroads for both Hindu and Buddhist theology.",
+      "nearbyPlaces": [
+  {
+    "id": "va-n1",
+    "title": "Sarnath",
+    "distance": "10 km",
+    "travelTime": "30 mins",
+    "type": "Spiritual",
+    "image": "/images/Sarnath_Special_Temple_for_Budhhist.jpg",
+    "description": "The place where Lord Buddha delivered his first sermon after enlightenment."
+  },
+  {
+    "id": "va-n2",
+    "title": "Chunar Fort",
+    "distance": "40 km",
+    "travelTime": "1.5 hrs",
+    "type": "Heritage",
+    "image": "/images/Chunar_Fort_2.jpg",
+    "description": "An ancient fort with a strategic position overlooking the Ganges River."
+  }
+]
+
+    },
+    {
+      "id": 7,
+      "title": "Leh Ladakh",
+      "location": "Ladakh",
+      "rating": 4.9,
+      "category": ["high-rated"],
+      "image": "/images/Leh ladhak.jpg",
+      "image2":"/images2/leh ladhak.jpg",
+      "description": "Strategically located at the crossroads of ancient trade routes between India, China, and Tibet, Leh was once the capital of the Himalayan Kingdom of Ladakh. The 17th-century Leh Palace, built by King Sengge Namgyal, is modeled after the Potala Palace in Lhasa. For centuries, Ladakh was a vital stop for caravans carrying silk, spices, and carpets, which explains the deep fusion of Indo-Tibetan culture seen in its monasteries (Gompas).",
+      "nearbyPlaces": [
+  {
+    "id": "ld-n1",
+    "title": "Nubra Valley",
+    "distance": "160 km",
+    "travelTime": "5 hrs",
+    "type": "Nature",
+    "image": "/images/Nubra_valley_hunder.jpg",
+    "description": "Known for sand dunes, double-humped camels, and monasteries."
+  },
+  {
+    "id": "ld-n2",
+    "title": "Pangong Lake",
+    "distance": "225 km",
+    "travelTime": "6 hrs",
+    "type": "Scenic",
+    "image": "/images/Blue_Pangong_lake,_Ladakh.jpg",
+    "description": "A high-altitude lake famous for its changing blue hues."
+  }
+]
+
+    },
+    {
+      "id": 8,
+      "title": "Hampi",
+      "location": "Karnataka",
+      "rating": 4.6,
+      "category": ["hidden-gem"],
+      "image": "/images/hampi.jpg",
+      "image2":"/images2/hampi.jpg",
+      "description": "Once the capital of the Vijayanagara Empire in the 14th century, Hampi was one of the largest and wealthiest cities in the world, attracting traders from Persia and Portugal. Its ruins, spread over 4,100 hectares, showcase a unique Dravidian architectural style. The Vittala Temple is famous for its musical pillars that emit melodic notes when tapped, and its iconic Stone Chariot, which is actually a shrine dedicated to Garuda, the carrier of Lord Vishnu.",
+      "nearbyPlaces": [
+  {
+    "id": "ha-n1",
+    "title": "Anegundi",
+    "distance": "6 km",
+    "travelTime": "20 mins",
+    "type": "Heritage",
+    "image": "/images/Anegundi_-_Rice_Farmers_-_3.jpg",
+    "description": "Considered older than Hampi, rich in mythology and traditional village life."
+  },
+  {
+    "id": "ha-n2",
+    "title": "Badami",
+    "distance": "140 km",
+    "travelTime": "3 hrs",
+    "type": "Heritage",
+    "image": "/images/Badami_caves_temple.jpg",
+    "description": "Famous for rock-cut cave temples and Chalukyan architecture."
+  }
+]
+
+    },
+    {
+      "id": 9,
+      "title": "Spiti Valley",
+      "location": "Himachal Pradesh",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "/images/spiti valley.jpg",
+      "image2":"/images2/spiti valley.jpg",
+      "description": "Spiti translates to The Middle Land,referring to its position between Tibet and India. It is a bastion of Vajrayana Buddhism. The Key Monastery, perched atop a hill at 13,668 feet, was founded in the 11th century and has survived numerous attacks by Mongol armies and devastating earthquakes. The valley remains one of the few places on Earth where the ancient Tibetan culture remains virtually untouched by the modern world.",
+      "nearbyPlaces": [
+  {
+    "id": "sp-n1",
+    "title": "Tabo Monastery",
+    "distance": "47 km",
+    "travelTime": "1.5 hrs",
+    "type": "Spiritual",
+    "image": "/images/tabo.jpg",
+    "description": "Over 1,000 years old, known as the Ajanta of the Himalayas."
+  },
+  {
+    "id": "sp-n2",
+    "title": "Chandratal Lake",
+    "distance": "95 km",
+    "travelTime": "4 hrs",
+    "type": "Scenic",
+    "image": "/images/Chandratal_Lake_(cropped)_(cropped).jpg",
+    "description": "A high-altitude crescent-shaped lake surrounded by mountains."
+  }
+]
+
+    },
+    {
+      "id": 10,
+      "title": "Udaipur",
+      "location": "Rajasthan",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "/images/udaipur.jpg",
+      "image2":"/images2/udaipur.jpg",
+      "description": "Founded in 1553 by Maharana Udai Singh II, Udaipur was established as the new capital of the Mewar Kingdom after the fall of Chittorgarh. The City Palace complex, which took nearly 400 years to complete, is a fusion of Rajasthani and Mughal styles. The Lake Palace (Jag Niwas), which appears to float on Lake Pichola, was built in 1746 as a pleasure palace for the royal family to enjoy the cool breezes coming off the water."
+    },
+    {
+      "id": 11,
+      "title": "Rishikesh",
+      "location": "Uttarakhand",
+      "rating": 4.5,
+      "category": ["recommended"],
+      "image": "/images/Rishkiesh.jpg",
+      "image2":"/images2/rishikesh.jpeg",
+      "description": "TMentioned in the ancient Skanda Purana, Rishikesh has been a site for penance and meditation for millennia. It gained global fame in 1968 when The Beatles visited the ashram of Maharishi Mahesh Yogi to study Transcendental Meditation. Today, it serves as the starting point for the Char Dham pilgrimage and is historically significant as the place where the Ganges leaves the mountains to begin its journey across the plains of India.",
+      "nearbyPlaces": [
+  {
+    "id": "ud-n1",
+    "title": "Mount Abu",
+    "distance": "165 km",
+    "travelTime": "4 hrs",
+    "type": "Hill Station",
+    "image": "/images/mount abu.jpg",
+    "description": "The only hill station in Rajasthan, home to Dilwara Temples."
+  },
+  {
+    "id": "ud-n2",
+    "title": "Chittorgarh",
+    "distance": "115 km",
+    "travelTime": "2.5 hrs",
+    "type": "Heritage",
+    "image": "/images/Chittorgarh-Samiddheshwara_Temple-01-20131014.jpg",
+    "description": "Known for Chittorgarh Fort, a symbol of Rajput valor and sacrifice."
+  }
+]
+
+    },
+    {
+      "id": 12,
+      "title": "Andaman Islands",
+      "location": "Andaman & Nicobar",
+      "rating": 4.8,
+      "category": ["high-rated"],
+      "image": "/images/andaman islands.jpg",
+      "image2":"/images2/andaman and nicobar.jpg",
+      "description": "While now a tropical paradise, the Andamans have a somber colonial history. The Cellular Jail in Port Blair, completed in 1906, was used by the British to exile Indian political prisoners to Kala Pani (Black Waters). Historically, the islands are also home to some of the world's most ancient indigenous tribes, such as the Sentinelese and the Jarawa, whose presence on the islands dates back over 60,000 years.",
+      "nearbyPlaces": [
+  {
+    "id": "an-n1",
+    "title": "Havelock Island",
+    "distance": "40 km (ferry)",
+    "travelTime": "1.5 hrs",
+    "type": "Beach",
+    "image": "/images/Havelock_Island,_Elephant_Beach,_Tree,_Andamans.jpg",
+    "description": "Known for Radhanagar Beach, one of Asia’s best beaches."
+  },
+  {
+    "id": "an-n2",
+    "title": "Ross Island",
+    "distance": "4 km",
+    "travelTime": "20 mins",
+    "type": "Heritage",
+    "image": "/images/South_End_of_Ross_Island.jpg",
+    "description": "A former British administrative settlement now reclaimed by nature."
+  }
+]
+
+    }
+  ]
+}
