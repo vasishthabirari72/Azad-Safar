@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Card from "./Box";
+import Card from "./box.jsx";
 
 function Body() {
   const [places, setPlaces] = useState([]);

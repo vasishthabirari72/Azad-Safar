@@ -12,10 +12,10 @@ function Navbar() {
 
         <nav className="navbar-links" aria-label="Main navigation">
           <NavLink to="/">Home</NavLink>
-          <button className="nav-link">Explore</button>
-          <button className="nav-link">Travel Partner</button>
-          <button className="nav-link">Tourist Guides</button>
-          <button className="nav-link">Contact</button>
+          <NavLink className="nav-link">Explore</NavLink>
+          <NavLink className="nav-link">Travel Partner</NavLink>
+          <NavLink className="nav-link">Tourist Guides</NavLink>
+          <NavLink  className="nav-link">Contact</NavLink>
         </nav>
 
         <div className="navbar-action">
