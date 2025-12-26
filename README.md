@@ -40,7 +40,7 @@ src/
 🎯 Purpose of This Project
 
 This project is being developed as:
-A learning project for frontend & React development
+A learning project for frontend & React development & backend
 A portfolio project for internships and placements
 A foundation for a future full-stack travel platform
 
