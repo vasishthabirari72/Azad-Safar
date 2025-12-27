@@ -158,7 +158,7 @@
       "distance": "150 km",
       "travelTime": "3 hrs",
       "type": "Wildlife / Forts",
-      "image": "./images/alwar.jpg",
+      "image": "images/alwar.jpg",
       "description": "Alwar is known for the Sariska Tiger Reserve and the historic Bala Quila (Alwar Fort). It served as a strategic military base during the Rajput and Mughal eras."
     },
     {
@@ -189,7 +189,7 @@
     "distance": "10 km",
     "travelTime": "30 mins",
     "type": "Spiritual",
-    "image": "./images/Sarnath_Special_Temple_for_Budhhist.jpg",
+    "image": "images/Sarnath_Special_Temple_for_Budhhist.jpg",
     "description": "The place where Lord Buddha delivered his first sermon after enlightenment."
   },
   {
