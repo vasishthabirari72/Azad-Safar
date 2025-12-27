@@ -8,12 +8,15 @@ function Body() {
   const [showAllHighRated, setShowAllHighRated] = useState(false);
   const [showAllHidden, setShowAllHidden] = useState(false);
 
-  /* ===== FETCH DATA ===== */
+  /* ===== FETCH DATA (GITHUB PAGES SAFE) ===== */
   useEffect(() => {
-    fetch("/places.json")
-      .then(res => res.json())
+    fetch(`${import.meta.env.BASE_URL}places.json`)
+      .then(res => {
+        if (!res.ok) throw new Error("Failed to load places.json");
+        return res.json();
+      })
       .then(data => {
-        setPlaces(data.places); // IMPORTANT: because JSON has { places: [...] }
+        setPlaces(data.places);
       })
       .catch(err => console.error("Error loading places:", err));
   }, []);
@@ -53,7 +56,7 @@ function Body() {
 
         <div className="recommended-row">
           {recommendedVisible.map(place => (
-            <Card key={place.id} place={place}/>
+            <Card key={place.id} place={place} />
           ))}
         </div>
 
