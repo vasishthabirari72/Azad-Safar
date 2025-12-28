@@ -10,6 +10,7 @@ function Body() {
 
   /* ===== FETCH DATA (GITHUB PAGES SAFE) ===== */
   useEffect(() => {
+    // import.meta.env.BASE_URL handles the /Azad-Safar/ path automatically
     fetch(`${import.meta.env.BASE_URL}places.json`)
       .then(res => {
         if (!res.ok) throw new Error("Failed to load places.json");
@@ -20,6 +21,15 @@ function Body() {
       })
       .catch(err => console.error("Error loading places:", err));
   }, []);
+
+  /* ===== LOADING GUARD: Add this to fix the ReferenceError ===== */
+  if (!places || places.length === 0) {
+    return (
+      <div style={{ color: 'white', textAlign: 'center', padding: '50px' }}>
+        <h2>Loading amazing destinations...</h2>
+      </div>
+    );
+  }
 
   /* ===== FILTER DATA ===== */
   const recommended = places.filter(p =>
@@ -49,17 +59,14 @@ function Body() {
 
   return (
     <section className="Body-section">
-
       {/* ===== RECOMMENDED ===== */}
       <section className="section recommended-section">
         <h2 className="section-title">Recommended for You</h2>
-
         <div className="recommended-row">
           {recommendedVisible.map(place => (
             <Card key={place.id} place={place} />
           ))}
         </div>
-
         {recommended.length > 4 && (
           <div
             className="show-more-btn"
@@ -75,13 +82,11 @@ function Body() {
       {/* ===== HIGH RATED ===== */}
       <section className="section">
         <h2 className="section-title">High Rated Places</h2>
-
         <div className="img-row">
           {highRatedVisible.map(place => (
             <Card key={place.id} place={place} />
           ))}
         </div>
-
         {highRated.length > 4 && (
           <div
             className="show-more-btn"
@@ -97,13 +102,11 @@ function Body() {
       {/* ===== HIDDEN GEMS ===== */}
       <section className="section">
         <h2 className="section-title">Hidden Gems</h2>
-
         <div className="img-row">
           {hiddenVisible.map(place => (
             <Card key={place.id} place={place} />
           ))}
         </div>
-
         {hiddenGems.length > 4 && (
           <div
             className="show-more-btn"
@@ -115,7 +118,6 @@ function Body() {
           </div>
         )}
       </section>
-
     </section>
   );
 }
