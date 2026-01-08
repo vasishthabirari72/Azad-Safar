@@ -11,7 +11,7 @@ function Navbar() {
         </div>
 
         <nav className="navbar-links" aria-label="Main navigation">
-          <NavLink to="/Azaad-Safar">Home</NavLink>
+          <NavLink to="/">Home</NavLink>
           <NavLink className="nav-link">Explore</NavLink>
           <NavLink className="nav-link">Travel Partner</NavLink>
           <NavLink className="nav-link">Tourist Guides</NavLink>

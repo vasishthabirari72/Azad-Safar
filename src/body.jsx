@@ -11,13 +11,13 @@ function Body() {
   /* ===== FETCH DATA (GITHUB PAGES SAFE) ===== */
   useEffect(() => {
     // import.meta.env.BASE_URL handles the /Azad-Safar/ path automatically
-    fetch(`${import.meta.env.BASE_URL}places.json`)
+    fetch(`http://localhost:8000/api/places`)
       .then(res => {
-        if (!res.ok) throw new Error("Failed to load places.json");
+        if (!res.ok) throw new Error("Failed to fetch places");
         return res.json();
       })
       .then(data => {
-        setPlaces(data.places);
+        setPlaces(data);
       })
       .catch(err => console.error("Error loading places:", err));
   }, []);

@@ -8,23 +8,20 @@ function PlaceDetails() {
   const [place, setPlace] = useState(null);
   const [showAllNearBy, setShowAllNearBy] = useState(false);
 
-  useEffect(() => {
-    // ✅ GitHub Pages safe fetch
-    fetch(`${import.meta.env.BASE_URL}places.json`)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to load places.json");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        const foundPlace = data.places.find(
-          (p) => p.id === Number(id)
-        );
-        setPlace(foundPlace);
-      })
-      .catch((err) => console.error(err));
-  }, [id]);
+ useEffect(() => {
+  fetch(`http://localhost:8000/api/places/${id}`)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("Failed to load place");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      setPlace(data); // ✅ DIRECT OBJECT
+    })
+    .catch((err) => console.error(err));
+}, [id]);
+
 
   if (!place) {
     return <h2>Loading or Place not found...</h2>;
