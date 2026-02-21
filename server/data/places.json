@@ -3,371 +3,995 @@
     {
       "id": 1,
       "title": "Taj Mahal",
-      "location": "Agra, Uttar Pradesh",
+      "state": "Uttar Pradesh",
+      "city": "Agra",
       "rating": 4.8,
       "category": ["high-rated", "recommended"],
       "image": "images/Taj Mahal.jpg",
-      "image2":"images2/Tajmahal_02.jpg",
-      "description": "Standing as a sublime testament to the Mughal Empire's architectural zenith, the Taj Mahal was commissioned in 1632 by Emperor Shah Jahan. Beyond its romantic origins as a tomb for his beloved wife, Mumtaz Mahal, the structure is a mathematical marvel of perfect symmetry. It took approximately 20,000 artisans and 22 years to complete, utilizing white marble brought from Makrana. The walls are intricately inlaid with semi-precious stones using the pietra dura technique, and the four minarets were intentionally tilted slightly outward to ensure that, in the event of an earthquake, they would fall away from the main tomb..",
+      "image2": "images2/Tajmahal_02.jpg",
+      "description": "Standing as a sublime testament to the Mughal Empire's architectural zenith, the Taj Mahal was commissioned in 1632 by Emperor Shah Jahan. Beyond its romantic origins as a tomb for his beloved wife, Mumtaz Mahal, the structure is a mathematical marvel of perfect symmetry. It took approximately 20,000 artisans and 22 years to complete, utilizing white marble brought from Makrana. The walls are intricately inlaid with semi-precious stones using the pietra dura technique, and the four minarets were intentionally tilted slightly outward to ensure that, in the event of an earthquake, they would fall away from the main tomb.",
       "nearbyPlaces": [
-  {
-    "id": "ag-n1",
-    "title": "Fatehpur Sikri",
-    "distance": "40 km",
-    "travelTime": "1 hr",
-    "type": "Heritage",
-    "image": "images/Fatehpur Sikri.jpg",
-    "description": "A UNESCO World Heritage Site built by Emperor Akbar, showcasing Indo-Islamic architecture and Mughal urban planning."
-  },
-  {
-    "id": "ag-n2",
-    "title": "Mathura",
-    "distance": "60 km",
-    "travelTime": "1.5 hrs",
-    "type": "Spiritual",
-    "image": "images/mathura.jpg",
-    "description": "Birthplace of Lord Krishna and a major pilgrimage center with ancient temples and ghats."
-  }
-]
-
+        {
+          "id": "ag-n1",
+          "title": "Fatehpur Sikri",
+          "distance": "40 km",
+          "travelTime": "1 hr",
+          "type": "Heritage",
+          "image": "images/Fatehpur Sikri.jpg",
+          "description": "A UNESCO World Heritage Site built by Emperor Akbar, showcasing Indo-Islamic architecture and Mughal urban planning."
+        },
+        {
+          "id": "ag-n2",
+          "title": "Mathura",
+          "distance": "60 km",
+          "travelTime": "1.5 hrs",
+          "type": "Spiritual",
+          "image": "images/mathura.jpg",
+          "description": "Birthplace of Lord Krishna and a major pilgrimage center with ancient temples and ghats."
+        }
+      ]
     },
     {
       "id": 2,
       "title": "Gateway of India",
-      "location": "Mumbai, Maharashtra",
+      "state": "Maharashtra",
+      "city": "Mumbai",
       "rating": 4.6,
       "category": ["high-rated"],
-      "image": "images/Gate way of india.JPG",
-      "image2":"images2/Gate_way_of-_India.JPG",
-      "description": "This monumental archway was erected to commemorate the landing of King George V and Queen Mary in 1911—the first visit by a reigning British monarch to India. Designed by architect George Wittet, it blends traditional Hindu and Muslim motifs with the Roman triumphal arch style. Ironically, while it was built to welcome British royalty, it also served as the symbolic exit point for the last British troops leaving India in 1948, marking the definitive end of colonial rule.",
+      "image": "images/Gateway_of_India.jpg",
+      "image2": "images2/Gateway_of_India.jpg",
+      "description": "Historic arch monument overlooking the Arabian Sea.",
       "nearbyPlaces": [
-  {
-    "id": "mu-n1",
-    "title": "Elephanta Caves",
-    "distance": "11 km (ferry)",
-    "travelTime": "1 hr",
-    "type": "Heritage",
-    "image": "images/Elephanta_caves_main_hall.jpg",
-    "description": "Rock-cut caves dating back to the 5th century, famous for the Trimurti sculpture of Lord Shiva."
-  },
-  {
-    "id": "mu-n2",
-    "title": "Alibaug",
-    "distance": "95 km",
-    "travelTime": "3 hrs",
-    "type": "Beach",
-    "image": "images/alibaug.jpg",
-    "description": "A coastal town popular for beaches, water sports, and weekend getaways from Mumbai."
-  }
-]
-
+        {
+          "id": "mu-n1",
+          "title": "Elephanta Caves",
+          "distance": "11 km (ferry)",
+          "travelTime": "1 hr",
+          "type": "Heritage",
+          "image": "images/Elephanta_caves_main_hall.jpg",
+          "description": "Rock-cut caves dating back to the 5th century, famous for the Trimurti sculpture of Lord Shiva."
+        },
+        {
+          "id": "mu-n2",
+          "title": "Alibaug",
+          "distance": "95 km",
+          "travelTime": "3 hrs",
+          "type": "Beach",
+          "image": "images/alibaug.jpg",
+          "description": "A coastal town popular for beaches, water sports, and weekend getaways from Mumbai."
+        }
+      ]
     },
     {
       "id": 3,
       "title": "Munnar",
-      "location": "Kerala",
+      "state": "Kerala",
+      "city": "Munnar",
       "rating": 4.7,
       "category": ["recommended"],
-      "image": "images/munar.jpg",
-      "image2":"images2/munar.jpg",
-      "description": "Originally known as the High Range of Travancore, Munnar was developed in the late 19th century as a summer resort for the British Government in South India. The transformation of the landscape began when John Daniel Munro leased the land in 1877, eventually leading to the massive tea plantations owned by the Tata Group today. It remains home to the Eravikulam National Park, which protects the endangered Nilgiri Tahr.",
+      "image": "images/munnar.jpg",
+      "image2": "images2/munnar.jpg",
+      "description": "Hill station known for tea plantations.",
       "nearbyPlaces": [
-  {
-    "id": "mn-n1",
-    "title": "Thekkady",
-    "distance": "90 km",
-    "travelTime": "3 hrs",
-    "type": "Wildlife",
-    "image": "images/Landscape_Tekkady_Kerala_India.jpg",
-    "description": "Home to Periyar National Park, famous for elephants, boating, and spice plantations."
-  },
-  {
-    "id": "mn-n2",
-    "title": "Anamudi Peak",
-    "distance": "25 km",
-    "travelTime": "1 hr",
-    "type": "Adventure",
-    "image": "images/Naikolli_Mala_near_Anamudi.jpg",
-    "description": "The highest peak in South India, located inside Eravikulam National Park."
-  }
-]
-
+        {
+          "id": "mn-n1",
+          "title": "Thekkady",
+          "distance": "90 km",
+          "travelTime": "3 hrs",
+          "type": "Wildlife",
+          "image": "images/Landscape_Tekkady_Kerala_India.jpg",
+          "description": "Home to Periyar National Park, famous for elephants, boating, and spice plantations."
+        },
+        {
+          "id": "mn-n2",
+          "title": "Anamudi Peak",
+          "distance": "25 km",
+          "travelTime": "1 hr",
+          "type": "Adventure",
+          "image": "images/Naikolli_Mala_near_Anamudi.jpg",
+          "description": "The highest peak in South India, located inside Eravikulam National Park."
+        }
+      ]
     },
     {
       "id": 4,
       "title": "Ziro Valley",
-      "location": "Arunachal Pradesh",
+      "state": "Arunachal Pradesh",
+      "city": "Ziro",
       "rating": 4.8,
       "category": ["hidden-gem"],
-      "image": "images/ziro valley.jpg",
-      "image2":"images2/ziro valley.jpg",
-      "description":"Tucked away in the Lower Subansiri district, Ziro is the ancestral home of the Apatani tribe, a community renowned for their sophisticated ecological knowledge and unique wet rice cultivation system. Unlike other nomadic tribes, the Apatanis have practiced sedentary agriculture for centuries. The valley is a candidate for UNESCO World Heritage status due to the tribe's harmonious relationship with nature and their preserved cultural identity.",
+      "image": "images/ziro.jpg",
+      "image2": "images2/ziro.jpg",
+      "description": "Scenic valley and home of Apatani tribe.",
       "nearbyPlaces": [
-  {
-    "id": "zi-n1",
-    "title": "Daporijo",
-    "distance": "110 km",
-    "travelTime": "4 hrs",
-    "type": "Nature",
-    "image": "images/Daporijo_Assembly_constituency_map.svg.png",
-    "description": "A scenic town known for rivers, suspension bridges, and tribal culture."
-  },
-  {
-    "id": "zi-n2",
-    "title": "Talley Valley Wildlife Sanctuary",
-    "distance": "32 km",
-    "travelTime": "1.5 hrs",
-    "type": "Wildlife",
-    "image": "images/talley.jpg",
-    "description": "A protected forest reserve rich in biodiversity and untouched landscapes."
-  }
-]
-
+        {
+          "id": "zi-n1",
+          "title": "Daporijo",
+          "distance": "110 km",
+          "travelTime": "4 hrs",
+          "type": "Nature",
+          "image": "images/Daporijo_Assembly_constituency_map.svg.png",
+          "description": "A scenic town known for rivers, suspension bridges, and tribal culture."
+        },
+        {
+          "id": "zi-n2",
+          "title": "Talley Valley Wildlife Sanctuary",
+          "distance": "32 km",
+          "travelTime": "1.5 hrs",
+          "type": "Wildlife",
+          "image": "images/talley.jpg",
+          "description": "A protected forest reserve rich in biodiversity and untouched landscapes."
+        }
+      ]
     },
     {
-  "id": 5,
-  "title": "Jaipur",
-  "location": "Rajasthan",
-  "rating": 4.6,
-  "category": ["recommended"],
-  "image": "images/jaipur.jpg",
-  "image2": "images/jaipur.jpg",
-  "description": "Founded in 1727 by Maharaja Sawai Jai Singh II, Jaipur was India’s first planned city, designed according to the principles of Vastu Shastra. The city’s distinctive pink hue was not original; it was painted in 1876 to welcome the Prince of Wales, as pink was considered the color of hospitality. The Hawa Mahal (Palace of Winds), with its 953 small windows, was specifically designed to allow royal ladies to observe daily life and festivals in the street below without being seen themselves.",
-  "nearbyPlaces": [
-    {
-      "id": "jp-n1",
-      "title": "Ajmer",
-      "distance": "135 km",
-      "travelTime": "2.5–3 hrs",
-      "type": "Spiritual / Heritage",
-      "image": "images/ajmer.jpg",
-      "description": "Ajmer is home to the revered Ajmer Sharif Dargah, the tomb of Sufi saint Khwaja Moinuddin Chishti. Founded in the 7th century, the city has long been a center of pilgrimage and cultural harmony."
+      "id": 5,
+      "title": "Jaipur",
+      "state": "Rajasthan",
+      "city": "Jaipur",
+      "rating": 4.6,
+      "category": ["recommended"],
+      "image": "images/jaipur.jpg",
+      "image2": "images2/jaipur.jpg",
+      "description": "Pink City and capital of Rajasthan.",
+      "nearbyPlaces": [
+        {
+          "id": "jp-n1",
+          "title": "Ajmer",
+          "distance": "135 km",
+          "travelTime": "2.5–3 hrs",
+          "type": "Spiritual / Heritage",
+          "image": "images/ajmer.jpg",
+          "description": "Ajmer is home to the revered Ajmer Sharif Dargah, the tomb of Sufi saint Khwaja Moinuddin Chishti. Founded in the 7th century, the city has long been a center of pilgrimage and cultural harmony."
+        },
+        {
+          "id": "jp-n2",
+          "title": "Pushkar",
+          "distance": "145 km",
+          "travelTime": "3 hrs",
+          "type": "Spiritual / Cultural",
+          "image": "images/Pushkar,_India,_Pushkar_Lake.jpg",
+          "description": "Pushkar is one of the oldest cities in India and is famous for the Brahma Temple, one of the very few dedicated to Lord Brahma. The annual Pushkar Camel Fair attracts visitors from across the world."
+        },
+        {
+          "id": "jp-n3",
+          "title": "Alwar",
+          "distance": "150 km",
+          "travelTime": "3 hrs",
+          "type": "Wildlife / Forts",
+          "image": "images/alwar.jpg",
+          "description": "Alwar is known for the Sariska Tiger Reserve and the historic Bala Quila (Alwar Fort). It served as a strategic military base during the Rajput and Mughal eras."
+        },
+        {
+          "id": "jp-n4",
+          "title": "Ranthambore National Park",
+          "distance": "180 km",
+          "travelTime": "4 hrs",
+          "type": "Wildlife",
+          "image": "images/ranthambore.JPG",
+          "description": "Once the hunting grounds of Jaipur's royal family, Ranthambore is now one of India's most famous tiger reserves, combining dramatic ruins with rich wildlife."
+        }
+      ]
     },
-    {
-      "id": "jp-n2",
-      "title": "Pushkar",
-      "distance": "145 km",
-      "travelTime": "3 hrs",
-      "type": "Spiritual / Cultural",
-      "image": "images/Pushkar,_India,_Pushkar_Lake.jpg",
-      "description": "Pushkar is one of the oldest cities in India and is famous for the Brahma Temple, one of the very few dedicated to Lord Brahma. The annual Pushkar Camel Fair attracts visitors from across the world."
-    },
-    {
-      "id": "jp-n3",
-      "title": "Alwar",
-      "distance": "150 km",
-      "travelTime": "3 hrs",
-      "type": "Wildlife / Forts",
-      "image": "images/alwar.jpg",
-      "description": "Alwar is known for the Sariska Tiger Reserve and the historic Bala Quila (Alwar Fort). It served as a strategic military base during the Rajput and Mughal eras."
-    },
-    {
-      "id": "jp-n4",
-      "title": "Ranthambore National Park",
-      "distance": "180 km",
-      "travelTime": "4 hrs",
-      "type": "Wildlife",
-      "image": "images/ranthambore.JPG",
-      "description": "Once the hunting grounds of Jaipur’s royal family, Ranthambore is now one of India’s most famous tiger reserves, combining dramatic ruins with rich wildlife."
-    }
-  ]
-},
-
     {
       "id": 6,
       "title": "Varanasi",
-      "location": "Uttar Pradesh",
+      "state": "Uttar Pradesh",
+      "city": "Varanasi",
       "rating": 4.7,
       "category": ["high-rated", "recommended"],
       "image": "images/Varansai.jpg",
-      "image2":"images2/varanasi.jpg",
-      "description": "Mark Twain once wrote that Varanasi is older than history, older than tradition, older even than legend. Known anciently as Kashi, it has been a center of learning and civilization for over 3,000 years. The city’s 84 ghats serve as the threshold between the physical and spiritual worlds. Historically, it was the site where Lord Buddha gave his first sermon at nearby Sarnath around 528 BCE, cementing the city's status as a crossroads for both Hindu and Buddhist theology.",
+      "image2": "images2/varanasi.jpg",
+      "description": "One of the oldest living cities in the world.",
       "nearbyPlaces": [
-  {
-    "id": "va-n1",
-    "title": "Sarnath",
-    "distance": "10 km",
-    "travelTime": "30 mins",
-    "type": "Spiritual",
-    "image": "images/Sarnath_Special_Temple_for_Budhhist.jpg",
-    "description": "The place where Lord Buddha delivered his first sermon after enlightenment."
-  },
-  {
-    "id": "va-n2",
-    "title": "Chunar Fort",
-    "distance": "40 km",
-    "travelTime": "1.5 hrs",
-    "type": "Heritage",
-    "image": "images/Chunar_Fort_2.jpg",
-    "description": "An ancient fort with a strategic position overlooking the Ganges River."
-  }
-]
-
+        {
+          "id": "va-n1",
+          "title": "Sarnath",
+          "distance": "10 km",
+          "travelTime": "30 mins",
+          "type": "Spiritual",
+          "image": "images/Sarnath_Special_Temple_for_Budhhist.jpg",
+          "description": "The place where Lord Buddha delivered his first sermon after enlightenment."
+        },
+        {
+          "id": "va-n2",
+          "title": "Chunar Fort",
+          "distance": "40 km",
+          "travelTime": "1.5 hrs",
+          "type": "Heritage",
+          "image": "images/Chunar_Fort_2.jpg",
+          "description": "An ancient fort with a strategic position overlooking the Ganges River."
+        }
+      ]
     },
     {
       "id": 7,
       "title": "Leh Ladakh",
-      "location": "Ladakh",
+      "state": "Ladakh",
+      "city": "Leh",
       "rating": 4.9,
       "category": ["high-rated"],
       "image": "images/Leh ladhak.jpg",
-      "image2":"images2/leh ladhak.jpg",
-      "description": "Strategically located at the crossroads of ancient trade routes between India, China, and Tibet, Leh was once the capital of the Himalayan Kingdom of Ladakh. The 17th-century Leh Palace, built by King Sengge Namgyal, is modeled after the Potala Palace in Lhasa. For centuries, Ladakh was a vital stop for caravans carrying silk, spices, and carpets, which explains the deep fusion of Indo-Tibetan culture seen in its monasteries (Gompas).",
+      "image2": "images2/leh ladhak.jpg",
+      "description": "High-altitude desert famous for monasteries.",
       "nearbyPlaces": [
-  {
-    "id": "ld-n1",
-    "title": "Nubra Valley",
-    "distance": "160 km",
-    "travelTime": "5 hrs",
-    "type": "Nature",
-    "image": "images/Nubra_valley_hunder.jpg",
-    "description": "Known for sand dunes, double-humped camels, and monasteries."
-  },
-  {
-    "id": "ld-n2",
-    "title": "Pangong Lake",
-    "distance": "225 km",
-    "travelTime": "6 hrs",
-    "type": "Scenic",
-    "image": "images/Blue_Pangong_lake,_Ladakh.jpg",
-    "description": "A high-altitude lake famous for its changing blue hues."
-  }
-]
-
+        {
+          "id": "ld-n1",
+          "title": "Nubra Valley",
+          "distance": "160 km",
+          "travelTime": "5 hrs",
+          "type": "Nature",
+          "image": "images/Nubra_valley_hunder.jpg",
+          "description": "Known for sand dunes, double-humped camels, and monasteries."
+        },
+        {
+          "id": "ld-n2",
+          "title": "Pangong Lake",
+          "distance": "225 km",
+          "travelTime": "6 hrs",
+          "type": "Scenic",
+          "image": "images/Blue_Pangong_lake,_Ladakh.jpg",
+          "description": "A high-altitude lake famous for its changing blue hues."
+        }
+      ]
     },
     {
       "id": 8,
       "title": "Hampi",
-      "location": "Karnataka",
+      "state": "Karnataka",
+      "city": "Hampi",
       "rating": 4.6,
       "category": ["hidden-gem"],
       "image": "images/hampi.jpg",
-      "image2":"images2/hampi.jpg",
-      "description": "Once the capital of the Vijayanagara Empire in the 14th century, Hampi was one of the largest and wealthiest cities in the world, attracting traders from Persia and Portugal. Its ruins, spread over 4,100 hectares, showcase a unique Dravidian architectural style. The Vittala Temple is famous for its musical pillars that emit melodic notes when tapped, and its iconic Stone Chariot, which is actually a shrine dedicated to Garuda, the carrier of Lord Vishnu.",
+      "image2": "images2/hampi.jpg",
+      "description": "Ruins of Vijayanagara Empire.",
       "nearbyPlaces": [
-  {
-    "id": "ha-n1",
-    "title": "Anegundi",
-    "distance": "6 km",
-    "travelTime": "20 mins",
-    "type": "Heritage",
-    "image": "images/Anegundi_-_Rice_Farmers_-_3.jpg",
-    "description": "Considered older than Hampi, rich in mythology and traditional village life."
-  },
-  {
-    "id": "ha-n2",
-    "title": "Badami",
-    "distance": "140 km",
-    "travelTime": "3 hrs",
-    "type": "Heritage",
-    "image": "images/Badami_caves_temple.jpg",
-    "description": "Famous for rock-cut cave temples and Chalukyan architecture."
-  }
-]
-
+        {
+          "id": "ha-n1",
+          "title": "Anegundi",
+          "distance": "6 km",
+          "travelTime": "20 mins",
+          "type": "Heritage",
+          "image": "images/Anegundi_-_Rice_Farmers_-_3.jpg",
+          "description": "Considered older than Hampi, rich in mythology and traditional village life."
+        },
+        {
+          "id": "ha-n2",
+          "title": "Badami",
+          "distance": "140 km",
+          "travelTime": "3 hrs",
+          "type": "Heritage",
+          "image": "images/Badami_caves_temple.jpg",
+          "description": "Famous for rock-cut cave temples and Chalukyan architecture."
+        }
+      ]
     },
     {
       "id": 9,
       "title": "Spiti Valley",
-      "location": "Himachal Pradesh",
+      "state": "Himachal Pradesh",
+      "city": "Spiti",
       "rating": 4.8,
       "category": ["hidden-gem"],
       "image": "images/spiti valley.jpg",
-      "image2":"images2/spiti valley.jpg",
-      "description": "Spiti translates to The Middle Land,referring to its position between Tibet and India. It is a bastion of Vajrayana Buddhism. The Key Monastery, perched atop a hill at 13,668 feet, was founded in the 11th century and has survived numerous attacks by Mongol armies and devastating earthquakes. The valley remains one of the few places on Earth where the ancient Tibetan culture remains virtually untouched by the modern world.",
+      "image2": "images2/spiti valley.jpg",
+      "description": "Cold desert mountain valley.",
       "nearbyPlaces": [
-  {
-    "id": "sp-n1",
-    "title": "Tabo Monastery",
-    "distance": "47 km",
-    "travelTime": "1.5 hrs",
-    "type": "Spiritual",
-    "image": "images/tabo.jpg",
-    "description": "Over 1,000 years old, known as the Ajanta of the Himalayas."
-  },
-  {
-    "id": "sp-n2",
-    "title": "Chandratal Lake",
-    "distance": "95 km",
-    "travelTime": "4 hrs",
-    "type": "Scenic",
-    "image": "images/Chandratal_Lake_(cropped)_(cropped).jpg",
-    "description": "A high-altitude crescent-shaped lake surrounded by mountains."
-  }
-]
-
+        {
+          "id": "sp-n1",
+          "title": "Tabo Monastery",
+          "distance": "47 km",
+          "travelTime": "1.5 hrs",
+          "type": "Spiritual",
+          "image": "images/tabo.jpg",
+          "description": "Over 1,000 years old, known as the Ajanta of the Himalayas."
+        },
+        {
+          "id": "sp-n2",
+          "title": "Chandratal Lake",
+          "distance": "95 km",
+          "travelTime": "4 hrs",
+          "type": "Scenic",
+          "image": "images/Chandratal_Lake_(cropped)_(cropped).jpg",
+          "description": "A high-altitude crescent-shaped lake surrounded by mountains."
+        }
+      ]
     },
     {
       "id": 10,
       "title": "Udaipur",
-      "location": "Rajasthan",
+      "state": "Rajasthan",
+      "city": "Udaipur",
       "rating": 4.7,
       "category": ["recommended"],
-      "image": "images/udaipur.jpg",
-      "image2":"images2/udaipur.jpg",
-      "description": "Founded in 1553 by Maharana Udai Singh II, Udaipur was established as the new capital of the Mewar Kingdom after the fall of Chittorgarh. The City Palace complex, which took nearly 400 years to complete, is a fusion of Rajasthani and Mughal styles. The Lake Palace (Jag Niwas), which appears to float on Lake Pichola, was built in 1746 as a pleasure palace for the royal family to enjoy the cool breezes coming off the water."
+      "image": "images/Udaipur.jpg",
+      "image2": "images2/udaipur.jpg",
+      "description": "City of Lakes.",
+      "nearbyPlaces": [
+        {
+          "id": "ud-n1",
+          "title": "Mount Abu",
+          "distance": "165 km",
+          "travelTime": "4 hrs",
+          "type": "Hill Station",
+          "image": "images/mount abu.jpg",
+          "description": "The only hill station in Rajasthan, home to Dilwara Temples."
+        },
+        {
+          "id": "ud-n2",
+          "title": "Chittorgarh",
+          "distance": "115 km",
+          "travelTime": "2.5 hrs",
+          "type": "Heritage",
+          "image": "images/Chittorgarh-Samiddheshwara_Temple-01-20131014.jpg",
+          "description": "Known for Chittorgarh Fort, a symbol of Rajput valor and sacrifice."
+        }
+      ]
     },
     {
       "id": 11,
       "title": "Rishikesh",
-      "location": "Uttarakhand",
+      "state": "Uttarakhand",
+      "city": "Rishikesh",
       "rating": 4.5,
       "category": ["recommended"],
       "image": "images/Rishkiesh.jpg",
-      "image2":"images2/rishikesh.jpeg",
-      "description": "TMentioned in the ancient Skanda Purana, Rishikesh has been a site for penance and meditation for millennia. It gained global fame in 1968 when The Beatles visited the ashram of Maharishi Mahesh Yogi to study Transcendental Meditation. Today, it serves as the starting point for the Char Dham pilgrimage and is historically significant as the place where the Ganges leaves the mountains to begin its journey across the plains of India.",
+      "image2": "images2/rishikesh.jpg",
+      "description": "Yoga capital of the world.",
       "nearbyPlaces": [
-  {
-    "id": "ud-n1",
-    "title": "Mount Abu",
-    "distance": "165 km",
-    "travelTime": "4 hrs",
-    "type": "Hill Station",
-    "image": "images/mount abu.jpg",
-    "description": "The only hill station in Rajasthan, home to Dilwara Temples."
-  },
-  {
-    "id": "ud-n2",
-    "title": "Chittorgarh",
-    "distance": "115 km",
-    "travelTime": "2.5 hrs",
-    "type": "Heritage",
-    "image": "images/Chittorgarh-Samiddheshwara_Temple-01-20131014.jpg",
-    "description": "Known for Chittorgarh Fort, a symbol of Rajput valor and sacrifice."
-  }
-]
-
+        {
+          "id": "ri-n1",
+          "title": "Haridwar",
+          "distance": "25 km",
+          "travelTime": "45 mins",
+          "type": "Spiritual",
+          "image": "images/haridwar.jpg",
+          "description": "One of the seven holiest places in Hinduism, famous for Ganga Aarti at Har Ki Pauri."
+        },
+        {
+          "id": "ri-n2",
+          "title": "Rajaji National Park",
+          "distance": "18 km",
+          "travelTime": "40 mins",
+          "type": "Wildlife",
+          "image": "images/rajaji.jpg",
+          "description": "Known for its population of wild elephants and diverse flora and fauna."
+        }
+      ]
     },
     {
       "id": 12,
       "title": "Andaman Islands",
-      "location": "Andaman & Nicobar",
+      "state": "Andaman & Nicobar",
+      "city": "Port Blair",
       "rating": 4.8,
       "category": ["high-rated"],
       "image": "images/andaman islands.jpg",
-      "image2":"images2/andaman and nicobar.jpg",
-      "description": "While now a tropical paradise, the Andamans have a somber colonial history. The Cellular Jail in Port Blair, completed in 1906, was used by the British to exile Indian political prisoners to Kala Pani (Black Waters). Historically, the islands are also home to some of the world's most ancient indigenous tribes, such as the Sentinelese and the Jarawa, whose presence on the islands dates back over 60,000 years.",
+      "image2": "images2/andaman.jpg",
+      "description": "Tropical islands with rich marine life.",
       "nearbyPlaces": [
-  {
-    "id": "an-n1",
-    "title": "Havelock Island",
-    "distance": "40 km (ferry)",
-    "travelTime": "1.5 hrs",
-    "type": "Beach",
-    "image": "images/Havelock_Island,_Elephant_Beach,_Tree,_Andamans.jpg",
-    "description": "Known for Radhanagar Beach, one of Asia’s best beaches."
-  },
-  {
-    "id": "an-n2",
-    "title": "Ross Island",
-    "distance": "4 km",
-    "travelTime": "20 mins",
-    "type": "Heritage",
-    "image": "images/South_End_of_Ross_Island.jpg",
-    "description": "A former British administrative settlement now reclaimed by nature."
-  }
-]
-
+        {
+          "id": "an-n1",
+          "title": "Havelock Island",
+          "distance": "40 km (ferry)",
+          "travelTime": "1.5 hrs",
+          "type": "Beach",
+          "image": "images/Havelock_Island,_Elephant_Beach,_Tree,_Andamans.jpg",
+          "description": "Known for Radhanagar Beach, one of Asia's best beaches."
+        },
+        {
+          "id": "an-n2",
+          "title": "Ross Island",
+          "distance": "4 km",
+          "travelTime": "20 mins",
+          "type": "Heritage",
+          "image": "images/South_End_of_Ross_Island.jpg",
+          "description": "A former British administrative settlement now reclaimed by nature."
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Goa",
+      "state": "Goa",
+      "city": "Panaji",
+      "rating": 4.6,
+      "category": ["high-rated", "recommended"],
+      "image": "images/goa.jpg",
+      "image2": "images2/goa.jpg",
+      "description": "Famous for beaches, nightlife, and Portuguese heritage. Goa offers a unique blend of Indian and European cultures with stunning coastline, vibrant markets, and historic churches.",
+      "nearbyPlaces": [
+        {
+          "id": "go-n1",
+          "title": "Dudhsagar Falls",
+          "distance": "60 km",
+          "travelTime": "2 hrs",
+          "type": "Nature",
+          "image": "images/dudhsagar.jpg",
+          "description": "One of India's tallest waterfalls, cascading from a height of 310 meters."
+        },
+        {
+          "id": "go-n2",
+          "title": "Old Goa",
+          "distance": "10 km",
+          "travelTime": "20 mins",
+          "type": "Heritage",
+          "image": "images/old_goa.jpg",
+          "description": "Historic city with UNESCO World Heritage churches and cathedrals from Portuguese era."
+        },
+        {
+          "id": "go-n3",
+          "title": "Chorla Ghat",
+          "distance": "55 km",
+          "travelTime": "1.5 hrs",
+          "type": "Nature",
+          "image": "images/chorla.jpg",
+          "description": "Biodiversity hotspot with pristine forests, waterfalls, and wildlife."
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Mysore Palace",
+      "state": "Karnataka",
+      "city": "Mysore",
+      "rating": 4.7,
+      "category": ["high-rated", "recommended"],
+      "image": "images/mysore_palace.jpg",
+      "image2": "images2/mysore_palace.jpg",
+      "description": "Historic palace of the Wadiyar dynasty, illuminated by 100,000 lights every Sunday. An architectural marvel combining Hindu, Muslim, Rajput and Gothic styles.",
+      "nearbyPlaces": [
+        {
+          "id": "my-n1",
+          "title": "Chamundi Hills",
+          "distance": "13 km",
+          "travelTime": "30 mins",
+          "type": "Spiritual",
+          "image": "images/chamundi.jpg",
+          "description": "Sacred hill with Chamundeshwari Temple and panoramic views of Mysore city."
+        },
+        {
+          "id": "my-n2",
+          "title": "Srirangapatna",
+          "distance": "16 km",
+          "travelTime": "30 mins",
+          "type": "Heritage",
+          "image": "images/srirangapatna.jpg",
+          "description": "Island fortress and capital of Tipu Sultan with historic monuments."
+        },
+        {
+          "id": "my-n3",
+          "title": "Bandipur National Park",
+          "distance": "80 km",
+          "travelTime": "2 hrs",
+          "type": "Wildlife",
+          "image": "images/bandipur.jpg",
+          "description": "Tiger reserve known for elephants, tigers, and diverse wildlife."
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Khajuraho",
+      "state": "Madhya Pradesh",
+      "city": "Khajuraho",
+      "rating": 4.6,
+      "category": ["recommended"],
+      "image": "images/khajuraho.jpg",
+      "image2": "images2/khajuraho.jpg",
+      "description": "UNESCO World Heritage Site famous for its exquisite medieval Hindu and Jain temples with intricate erotic sculptures built by Chandela dynasty between 950-1050 AD.",
+      "nearbyPlaces": [
+        {
+          "id": "kh-n1",
+          "title": "Panna National Park",
+          "distance": "30 km",
+          "travelTime": "45 mins",
+          "type": "Wildlife",
+          "image": "images/panna.jpg",
+          "description": "Tiger reserve along Ken River with diamond mines and waterfalls."
+        },
+        {
+          "id": "kh-n2",
+          "title": "Raneh Falls",
+          "distance": "25 km",
+          "travelTime": "40 mins",
+          "type": "Nature",
+          "image": "images/raneh.jpg",
+          "description": "Waterfall cascading through crystalline granite canyon with unique rock formations."
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "title": "Darjeeling",
+      "state": "West Bengal",
+      "city": "Darjeeling",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "images/darjeeling.jpg",
+      "image2": "images2/darjeeling.jpg",
+      "description": "Queen of the Hills, famous for tea plantations, Toy Train (UNESCO Heritage), and stunning views of Kanchenjunga, the world's third-highest peak.",
+      "nearbyPlaces": [
+        {
+          "id": "da-n1",
+          "title": "Tiger Hill",
+          "distance": "11 km",
+          "travelTime": "30 mins",
+          "type": "Scenic",
+          "image": "images/tiger_hill.jpg",
+          "description": "Famous viewpoint for sunrise over Kanchenjunga and Mount Everest."
+        },
+        {
+          "id": "da-n2",
+          "title": "Kalimpong",
+          "distance": "50 km",
+          "travelTime": "2 hrs",
+          "type": "Hill Station",
+          "image": "images/kalimpong.jpg",
+          "description": "Scenic hill station known for Buddhist monasteries, orchids, and handicrafts."
+        },
+        {
+          "id": "da-n3",
+          "title": "Mirik",
+          "distance": "49 km",
+          "travelTime": "1.5 hrs",
+          "type": "Nature",
+          "image": "images/mirik.jpg",
+          "description": "Peaceful town centered around Sumendu Lake with tea gardens and orange orchards."
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "title": "Konark Sun Temple",
+      "state": "Odisha",
+      "city": "Konark",
+      "rating": 4.8,
+      "category": ["high-rated"],
+      "image": "images/konark.jpg",
+      "image2": "images2/konark.jpg",
+      "description": "13th-century Sun Temple built as a giant stone chariot with 24 elaborately carved wheels. UNESCO World Heritage Site showcasing Kalinga architecture.",
+      "nearbyPlaces": [
+        {
+          "id": "ko-n1",
+          "title": "Puri",
+          "distance": "35 km",
+          "travelTime": "1 hr",
+          "type": "Spiritual / Beach",
+          "image": "images/puri.jpg",
+          "description": "Sacred city with Jagannath Temple and golden beaches along Bay of Bengal."
+        },
+        {
+          "id": "ko-n2",
+          "title": "Chilika Lake",
+          "distance": "70 km",
+          "travelTime": "2 hrs",
+          "type": "Nature",
+          "image": "images/chilika.jpg",
+          "description": "Asia's largest brackish water lagoon, winter home to migratory birds and Irrawaddy dolphins."
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "title": "Kaziranga National Park",
+      "state": "Assam",
+      "city": "Bokakhat",
+      "rating": 4.9,
+      "category": ["high-rated", "hidden-gem"],
+      "image": "images/kaziranga.jpg",
+      "image2": "images2/kaziranga.jpg",
+      "description": "UNESCO World Heritage Site, home to two-thirds of world's one-horned rhinoceros population. Also habitat for elephants, wild water buffalo, and swamp deer.",
+      "nearbyPlaces": [
+        {
+          "id": "ka-n1",
+          "title": "Majuli Island",
+          "distance": "120 km",
+          "travelTime": "3 hrs",
+          "type": "Cultural",
+          "image": "images/majuli.jpg",
+          "description": "World's largest river island in Brahmaputra, center of Assamese neo-Vaishnavite culture with ancient satras (monasteries)."
+        },
+        {
+          "id": "ka-n2",
+          "title": "Sivasagar",
+          "distance": "95 km",
+          "travelTime": "2.5 hrs",
+          "type": "Heritage",
+          "image": "images/sivasagar.jpg",
+          "description": "Former capital of Ahom Kingdom with historic palaces, temples, and artificial tank."
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "title": "Rann of Kutch",
+      "state": "Gujarat",
+      "city": "Bhuj",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "images/rann.jpg",
+      "image2": "images2/rann.jpg",
+      "description": "World's largest salt desert spanning 7,500 sq km. During monsoon floods with seawater, transforming into white salt plains in winter. Famous for Rann Utsav festival.",
+      "nearbyPlaces": [
+        {
+          "id": "ra-n1",
+          "title": "Dholavira",
+          "distance": "130 km",
+          "travelTime": "3 hrs",
+          "type": "Heritage",
+          "image": "images/dholavira.jpg",
+          "description": "One of largest Harappan cities, UNESCO World Heritage Site with advanced urban planning."
+        },
+        {
+          "id": "ra-n2",
+          "title": "Mandvi Beach",
+          "distance": "60 km",
+          "travelTime": "1.5 hrs",
+          "type": "Beach",
+          "image": "images/mandvi.jpg",
+          "description": "Pristine beach with Vijay Vilas Palace, known for traditional shipbuilding."
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "Ajanta & Ellora Caves",
+      "state": "Maharashtra",
+      "city": "Aurangabad",
+      "rating": 4.9,
+      "category": ["high-rated", "recommended"],
+      "image": "images/ajanta_ellora.jpg",
+      "image2": "images2/ajanta_ellora.jpg",
+      "description": "Twin UNESCO World Heritage Sites. Ajanta features 30 Buddhist rock-cut caves with ancient frescoes (200 BCE-650 CE). Ellora has 34 monasteries and temples carved vertically into rock face.",
+      "nearbyPlaces": [
+        {
+          "id": "aj-n1",
+          "title": "Daulatabad Fort",
+          "distance": "16 km",
+          "travelTime": "30 mins",
+          "type": "Heritage",
+          "image": "images/daulatabad.jpg",
+          "description": "14th-century hilltop fortress with intricate defense mechanisms and Chand Minar tower."
+        },
+        {
+          "id": "aj-n2",
+          "title": "Bibi Ka Maqbara",
+          "distance": "5 km",
+          "travelTime": "15 mins",
+          "type": "Heritage",
+          "image": "images/bibi_maqbara.jpg",
+          "description": "Mughal tomb built by Aurangzeb's son, often called 'Mini Taj Mahal'."
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "title": "Ooty",
+      "state": "Tamil Nadu",
+      "city": "Ooty",
+      "rating": 4.5,
+      "category": ["recommended"],
+      "image": "images/ooty.jpg",
+      "image2": "images2/ooty.jpg",
+      "description": "Queen of Hill Stations in Nilgiri Mountains, known for tea gardens, colonial architecture, Nilgiri Mountain Railway (UNESCO Heritage), and botanical gardens.",
+      "nearbyPlaces": [
+        {
+          "id": "oo-n1",
+          "title": "Coonoor",
+          "distance": "19 km",
+          "travelTime": "45 mins",
+          "type": "Hill Station",
+          "image": "images/coonoor.jpg",
+          "description": "Scenic hill station with Sim's Park, Dolphin's Nose viewpoint, and tea estates."
+        },
+        {
+          "id": "oo-n2",
+          "title": "Mudumalai National Park",
+          "distance": "35 km",
+          "travelTime": "1.5 hrs",
+          "type": "Wildlife",
+          "image": "images/mudumalai.jpg",
+          "description": "Tiger reserve at tri-junction of Tamil Nadu, Karnataka and Kerala with diverse wildlife."
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "title": "Coorg",
+      "state": "Karnataka",
+      "city": "Madikeri",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "images/coorg.jpg",
+      "image2": "images2/coorg.jpg",
+      "description": "Scotland of India, famous for coffee plantations, misty hills, waterfalls, and Kodava culture. Known for trekking, wildlife, and pepper estates.",
+      "nearbyPlaces": [
+        {
+          "id": "co-n1",
+          "title": "Abbey Falls",
+          "distance": "8 km",
+          "travelTime": "20 mins",
+          "type": "Nature",
+          "image": "images/abbey_falls.jpg",
+          "description": "Picturesque waterfall surrounded by coffee plantations and spice estates."
+        },
+        {
+          "id": "co-n2",
+          "title": "Nagarhole National Park",
+          "distance": "50 km",
+          "travelTime": "1.5 hrs",
+          "type": "Wildlife",
+          "image": "images/nagarhole.jpg",
+          "description": "Premium tiger and elephant habitat with rich biodiversity along Kabini River."
+        },
+        {
+          "id": "co-n3",
+          "title": "Talakaveri",
+          "distance": "48 km",
+          "travelTime": "1.5 hrs",
+          "type": "Spiritual",
+          "image": "images/talakaveri.jpg",
+          "description": "Sacred origin point of River Kaveri atop Brahmagiri hills."
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "title": "Alleppey Backwaters",
+      "state": "Kerala",
+      "city": "Alappuzha",
+      "rating": 4.8,
+      "category": ["high-rated", "recommended"],
+      "image": "images/alleppey.jpg",
+      "image2": "images2/alleppey.jpg",
+      "description": "Venice of the East, famous for houseboat cruises through intricate network of canals, lagoons, and lakes. Experience traditional Kerala village life along waterways.",
+      "nearbyPlaces": [
+        {
+          "id": "al-n1",
+          "title": "Kumarakom",
+          "distance": "32 km",
+          "travelTime": "1 hr",
+          "type": "Nature",
+          "image": "images/kumarakom.jpg",
+          "description": "Bird sanctuary on Vembanad Lake, paradise for birdwatchers with migratory species."
+        },
+        {
+          "id": "al-n2",
+          "title": "Marari Beach",
+          "distance": "11 km",
+          "travelTime": "25 mins",
+          "type": "Beach",
+          "image": "images/marari.jpg",
+          "description": "Pristine, secluded beach with palm-fringed shores and fishing villages."
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "title": "Shillong",
+      "state": "Meghalaya",
+      "city": "Shillong",
+      "rating": 4.6,
+      "category": ["hidden-gem"],
+      "image": "images/shillong.jpg",
+      "image2": "images2/shillong.jpg",
+      "description": "Scotland of the East, hill station known for waterfalls, living root bridges, caves, and vibrant music culture. Capital of Meghalaya with pleasant climate year-round.",
+      "nearbyPlaces": [
+        {
+          "id": "sh-n1",
+          "title": "Cherrapunji",
+          "distance": "54 km",
+          "travelTime": "2 hrs",
+          "type": "Nature",
+          "image": "images/cherrapunji.jpg",
+          "description": "One of wettest places on Earth, famous for double-decker living root bridges and waterfalls."
+        },
+        {
+          "id": "sh-n2",
+          "title": "Mawlynnong",
+          "distance": "90 km",
+          "travelTime": "3 hrs",
+          "type": "Village",
+          "image": "images/mawlynnong.jpg",
+          "description": "Asia's cleanest village with sky-view platform and living root bridge."
+        },
+        {
+          "id": "sh-n3",
+          "title": "Dawki",
+          "distance": "82 km",
+          "travelTime": "2.5 hrs",
+          "type": "Nature",
+          "image": "images/dawki.jpg",
+          "description": "Border town with crystal-clear Umngot River where boats appear to float on air."
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "title": "Amritsar Golden Temple",
+      "state": "Punjab",
+      "city": "Amritsar",
+      "rating": 4.9,
+      "category": ["high-rated", "recommended"],
+      "image": "images/golden_temple.jpg",
+      "image2": "images2/golden_temple.jpg",
+      "description": "Holiest Sikh shrine Harmandir Sahib with gold-plated dome surrounded by sacred Amrit Sarovar pool. Open to all faiths, serving free meals to 100,000+ daily visitors.",
+      "nearbyPlaces": [
+        {
+          "id": "am-n1",
+          "title": "Wagah Border",
+          "distance": "28 km",
+          "travelTime": "45 mins",
+          "type": "Patriotic",
+          "image": "images/wagah.jpg",
+          "description": "Indo-Pakistan border famous for elaborate flag-lowering ceremony every evening."
+        },
+        {
+          "id": "am-n2",
+          "title": "Jallianwala Bagh",
+          "distance": "2 km",
+          "travelTime": "10 mins",
+          "type": "Heritage",
+          "image": "images/jallianwala.jpg",
+          "description": "Memorial park commemorating 1919 massacre, preserved with bullet marks in walls."
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "title": "Tawang Monastery",
+      "state": "Arunachal Pradesh",
+      "city": "Tawang",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "images/tawang.jpg",
+      "image2": "images2/tawang.jpg",
+      "description": "India's largest and world's second-largest Buddhist monastery at 10,000 feet, founded in 1680-81. Home to 300 monks with stunning Himalayan backdrop and birthplace of 6th Dalai Lama.",
+      "nearbyPlaces": [
+        {
+          "id": "ta-n1",
+          "title": "Sela Pass",
+          "distance": "78 km",
+          "travelTime": "3 hrs",
+          "type": "Scenic",
+          "image": "images/sela_pass.jpg",
+          "description": "High-altitude pass at 13,700 feet with frozen Sela Lake and prayer flags."
+        },
+        {
+          "id": "ta-n2",
+          "title": "Bumla Pass",
+          "distance": "37 km",
+          "travelTime": "2 hrs",
+          "type": "Adventure",
+          "image": "images/bumla.jpg",
+          "description": "Indo-China border pass at 15,200 feet, requires special permit to visit."
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "title": "Mahabalipuram",
+      "state": "Tamil Nadu",
+      "city": "Mahabalipuram",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "images/mahabalipuram.jpg",
+      "image2": "images2/mahabalipuram.jpg",
+      "description": "UNESCO World Heritage Site with 7th-8th century Pallava rock-cut temples and Shore Temple. Features world's largest bas-relief 'Descent of the Ganges' and ancient port city ruins.",
+      "nearbyPlaces": [
+        {
+          "id": "ma-n1",
+          "title": "Kanchipuram",
+          "distance": "64 km",
+          "travelTime": "1.5 hrs",
+          "type": "Spiritual",
+          "image": "images/kanchipuram.jpg",
+          "description": "City of thousand temples, one of seven sacred cities in Hinduism, famous for silk sarees."
+        },
+        {
+          "id": "ma-n2",
+          "title": "Crocodile Bank",
+          "distance": "14 km",
+          "travelTime": "25 mins",
+          "type": "Wildlife",
+          "image": "images/crocodile_bank.jpg",
+          "description": "Reptile zoo and conservation center with rare crocodile and turtle species."
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "title": "Jim Corbett National Park",
+      "state": "Uttarakhand",
+      "city": "Ramnagar",
+      "rating": 4.7,
+      "category": ["recommended"],
+      "image": "images/corbett.jpg",
+      "image2": "images2/corbett.jpg",
+      "description": "India's oldest national park established in 1936, premier Bengal tiger habitat. Named after hunter-turned-conservationist Jim Corbett, encompasses 520 sq km of diverse terrain.",
+      "nearbyPlaces": [
+        {
+          "id": "ji-n1",
+          "title": "Nainital",
+          "distance": "65 km",
+          "travelTime": "2 hrs",
+          "type": "Hill Station",
+          "image": "images/nainital.jpg",
+          "description": "Lake district of India centered around pear-shaped Naini Lake with colonial charm."
+        },
+        {
+          "id": "ji-n2",
+          "title": "Ranikhet",
+          "distance": "95 km",
+          "travelTime": "3 hrs",
+          "type": "Hill Station",
+          "image": "images/ranikhet.jpg",
+          "description": "Peaceful cantonment town with panoramic Himalayan views and golf course."
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "title": "Sundarbans",
+      "state": "West Bengal",
+      "city": "Gosaba",
+      "rating": 4.8,
+      "category": ["hidden-gem"],
+      "image": "images/sundarbans.jpg",
+      "image2": "images2/sundarbans.jpg",
+      "description": "World's largest mangrove forest and UNESCO World Heritage Site, home to Royal Bengal Tigers. Delta formed by Ganges, Brahmaputra and Meghna rivers spanning India-Bangladesh.",
+      "nearbyPlaces": [
+        {
+          "id": "su-n1",
+          "title": "Sajnekhali Bird Sanctuary",
+          "distance": "12 km",
+          "travelTime": "1 hr boat",
+          "type": "Wildlife",
+          "image": "images/sajnekhali.jpg",
+          "description": "Watchtower for spotting crocodiles, deer, and diverse bird species in mangroves."
+        },
+        {
+          "id": "su-n2",
+          "title": "Bonbibi Temple",
+          "distance": "8 km",
+          "travelTime": "45 mins",
+          "type": "Cultural",
+          "image": "images/bonbibi.jpg",
+          "description": "Shrine dedicated to forest goddess Bonbibi, protector of honey collectors and fishermen."
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "title": "Valley of Flowers",
+      "state": "Uttarakhand",
+      "city": "Joshimath",
+      "rating": 4.9,
+      "category": ["hidden-gem"],
+      "image": "images/valley_flowers.jpg",
+      "image2": "images2/valley_flowers.jpg",
+      "description": "UNESCO World Heritage Site at 3,658m altitude, blooms with endemic alpine flowers (July-September). Discovered in 1931, showcases 520+ species including rare blue poppy and cobra lily.",
+      "nearbyPlaces": [
+        {
+          "id": "vo-n1",
+          "title": "Hemkund Sahib",
+          "distance": "6 km trek",
+          "travelTime": "3 hrs",
+          "type": "Spiritual",
+          "image": "images/hemkund.jpg",
+          "description": "Sikh pilgrimage site at 4,632m beside glacial lake surrounded by seven peaks."
+        },
+        {
+          "id": "vo-n2",
+          "title": "Badrinath Temple",
+          "distance": "44 km",
+          "travelTime": "2 hrs",
+          "type": "Spiritual",
+          "image": "images/badrinath.jpg",
+          "description": "One of Char Dham pilgrimage sites dedicated to Lord Vishnu in Garhwal Himalayas."
+        }
+      ]
     }
   ]
 }

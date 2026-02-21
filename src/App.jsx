@@ -1,7 +1,7 @@
 import './App.css'
 import Navabar from './navabar.jsx'
 import Footer from './footer.jsx'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import PlaceDetails from './placeDetails.jsx'
 import Home from "./home.jsx";
 import Explore from "./explore.jsx";
@@ -20,7 +20,8 @@ function App() {
         <Route path="/place/:id" element={<PlaceDetails />} />
          <Route path="/explore" element={<Explore />} />
          <Route path="/search" element={<Search />}/>
-         <Route path="/travel-planner" element={<TravelPlanner />} />
+         <Route path="/travel-partner" element={<TravelPlanner />} />
+         <Route path="/travel-planner" element={<Navigate to="/travel-partner" replace />} />
       </Routes>
 
       <Footer />
