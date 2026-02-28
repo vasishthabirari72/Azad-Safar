@@ -79,7 +79,9 @@ function Navbar() {
             Travel Partner
           </NavLink>
           <a href="#">Tourist Guides</a>
-          <a href="#">Contact</a>
+          <NavLink to="/contact" className={navClassName}>
+            Contact
+          </NavLink>
         </nav>
 
         <div className="premium-actions" ref={dropdownRef}>

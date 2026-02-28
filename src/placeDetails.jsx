@@ -127,7 +127,7 @@ function PlaceDetails() {
         rating: 5,
         comment: "",
       });
-    } catch (error) {
+    } catch {
       setReviewError("Could not submit review. Please try again.");
     } finally {
       setIsSubmittingReview(false);

@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 /* ===== RESET & VARIABLES ===== */
 :root {
   /* CSS Variables */
@@ -237,15 +239,21 @@ body {
 
 
 /* ===== Search Bar ===== */
- .search-bar {
+.search-bar,
+.search-wrapper {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   padding: 0.4rem;
   border-radius: 50px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.search-wrapper {
+  width: min(920px, 92vw);
+  margin: 0 auto;
 }
 
 
@@ -253,13 +261,20 @@ body {
 .search-input {
   border: none;
   outline: none;
+  background: #ffffff;
+  color: #1e293b;
   padding: 0.8rem 1.2rem;
   font-size: 1rem;
   border-radius:  50px 0px 0px 50px;
-  min-width: 280px;
-  width: min(680px, 78vw);
+  min-width: 0;
+  width: auto;
+  flex: 1;
   max-width: 100%;
   height: 47.6px;
+}
+
+.search-input::placeholder {
+  color: #475569;
 }
 
 
@@ -269,10 +284,11 @@ body {
   height:47.6px;
   color: #ffffff;
   padding: 0.8rem 1.2rem;
-  margin-right: 30px;
+  margin-right: 0;
   font-size: 1rem;
   border-radius: 0 50% 50% 0;
   cursor: pointer;
+  flex-shrink: 0;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1587,11 +1603,16 @@ section iframe {
 
   .search-wrapper {
     width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+    padding: 0.5rem;
+    border-radius: 16px;
   }
 
   .search-input {
     border-radius: 14px;
-    margin-bottom: 0.55rem;
+    margin-bottom: 0;
     height: 44px;
   }
 

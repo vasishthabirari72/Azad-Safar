@@ -1,6 +1,15 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import "./travelPlanner.css";
+import {
+  BookingConfirmationModal,
+  BookingSummary,
+  GuideCard,
+  GuideProfileModal,
+  ServicesTabs,
+  VehicleCard,
+  resolveMarketplaceForDestination,
+} from "./servicesMarketplace.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || API_BASE;
@@ -39,6 +48,20 @@ const DESTINATION_IMAGES = {
   andaman: "/images/andaman islands.jpg",
   gateway: "/images/Gate way of india.JPG",
 };
+const DESTINATION_LOCATIONS = {
+  amritsar: "Amritsar, Punjab",
+  "taj mahal": "Agra, Uttar Pradesh",
+  varanasi: "Varanasi, Uttar Pradesh",
+  jaipur: "Jaipur, Rajasthan",
+  ladakh: "Leh, Ladakh",
+  leh: "Leh, Ladakh",
+  spiti: "Spiti Valley, Himachal Pradesh",
+  andaman: "Port Blair, Andaman and Nicobar",
+  gateway: "Mumbai, Maharashtra",
+  ajanta: "Aurangabad, Maharashtra",
+  ellora: "Aurangabad, Maharashtra",
+};
+const PROFILE_CITIES = ["Mumbai", "Pune", "Aurangabad", "Nashik", "Nagpur", "Thane"];
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
 
@@ -77,6 +100,7 @@ const mapGroup = (group) => ({
   endDate: group.endDate,
   filledCount: Number(group.filledCount),
   totalCount: Number(group.totalCount),
+  createdAt: group.createdAt || null,
   joinRequests: (group.joinRequests || []).map((request) => ({
     id: request._id || request.id,
     userName: request.userName,
@@ -95,6 +119,34 @@ const formatDateRange = (startDate, endDate) => {
   const startText = start.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
   const endText = end.toLocaleDateString("en-IN", { day: "numeric", month: sameMonth ? undefined : "short" });
   return `${startText} - ${endText} | ${days} Day${days > 1 ? "s" : ""}`;
+};
+
+const formatCompactDateRange = (startDate, endDate) => {
+  if (!startDate || !endDate) return "Dates not set";
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return "Dates not set";
+  const days = Math.max(1, Math.ceil((end - start) / 86400000));
+  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const startDay = start.toLocaleDateString("en-IN", { day: "numeric" });
+  const endDay = end.toLocaleDateString("en-IN", { day: "numeric" });
+  const startMonthYear = start.toLocaleDateString("en-IN", {
+    month: "short",
+    year: "numeric",
+  });
+  const endMonthYear = end.toLocaleDateString("en-IN", {
+    month: "short",
+    year: "numeric",
+  });
+
+  const dateText = sameMonth
+    ? `${startDay}-${endDay} ${startMonthYear}`
+    : sameYear
+    ? `${startDay} ${start.toLocaleDateString("en-IN", { month: "short" })} - ${endDay} ${endMonthYear}`
+    : `${startDay} ${startMonthYear} - ${endDay} ${endMonthYear}`;
+
+  return `${dateText} Â· ${days} Day${days > 1 ? "s" : ""}`;
 };
 
 const formatTripTiming = (startDate, endDate) => {
@@ -137,6 +189,12 @@ const getDestinationImage = (destination) => {
   return match ? DESTINATION_IMAGES[match] : "/images/hero.jpg";
 };
 
+const getDestinationLocation = (destination) => {
+  const text = String(destination || "").toLowerCase();
+  const match = Object.keys(DESTINATION_LOCATIONS).find((key) => text.includes(key));
+  return match ? DESTINATION_LOCATIONS[match] : "India";
+};
+
 const getSeatTone = (ratio) => {
   if (ratio <= 0.5) return "cool";
   if (ratio <= 0.8) return "mid";
@@ -156,6 +214,48 @@ const getMessageTime = (timestamp) => {
   const date = new Date(timestamp || "");
   if (Number.isNaN(date.getTime())) return "";
   return date.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+};
+
+const formatRelativeCreatedAt = (value) => {
+  if (!value) return "Created recently";
+  const created = new Date(value);
+  if (Number.isNaN(created.getTime())) return "Created recently";
+  const days = Math.max(0, Math.floor((Date.now() - created.getTime()) / 86400000));
+  if (days === 0) return "Created today";
+  if (days === 1) return "Created 1 day ago";
+  return `Created ${days} days ago`;
+};
+
+const getTripStatus = (group) => {
+  const now = Date.now();
+  const end = new Date(group.endDate || "").getTime();
+  if (!Number.isNaN(end) && end < now) return "Completed";
+  if (group.filledCount >= group.totalCount) return "Full";
+  return "Open";
+};
+
+const getInitials = (name) =>
+  String(name || "TR")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("") || "TR";
+
+const getTravelerProfile = (seedValue) => {
+  const score = hashScore(seedValue);
+  return {
+    age: 20 + (score % 12),
+    city: PROFILE_CITIES[score % PROFILE_CITIES.length],
+    rating: (4.1 + ((score % 9) / 10)).toFixed(1),
+  };
+};
+
+const getSeatsRemainingMeta = (seatsLeft) => {
+  if (seatsLeft <= 0) return { tone: "full", label: "? Trip full" };
+  if (seatsLeft === 1) return { tone: "last", label: "?? Last seat!" };
+  if (seatsLeft <= 2) return { tone: "few", label: `?? ${seatsLeft} seats remaining` };
+  return { tone: "many", label: `?? ${seatsLeft} seats remaining` };
 };
 
 const getTabFromHash = () => {
@@ -200,8 +300,19 @@ function TravelPlanner() {
   });
 
   const [requestSubmittingByTrip, setRequestSubmittingByTrip] = useState({});
+  const [leaveSubmittingByTrip, setLeaveSubmittingByTrip] = useState({});
   const [deleteSubmittingByTrip, setDeleteSubmittingByTrip] = useState({});
   const [reviewSubmittingByRequest, setReviewSubmittingByRequest] = useState({});
+  const [tripDetailId, setTripDetailId] = useState("");
+  const [servicesActiveTab, setServicesActiveTab] = useState("guides");
+  const [guideFilters, setGuideFilters] = useState({
+    language: "Any",
+    priceRange: "Any",
+    minRating: "Any",
+  });
+  const [guideProfile, setGuideProfile] = useState(null);
+  const [bookingIntent, setBookingIntent] = useState(null);
+  const [tripServicesByTrip, setTripServicesByTrip] = useState({});
 
   const [activeChatTripId, setActiveChatTripId] = useState("");
   const [chatInput, setChatInput] = useState("");
@@ -212,7 +323,7 @@ function TravelPlanner() {
   const chatMessagesRef = useRef(null);
   const toastTimerRef = useRef(null);
 
-  const refreshGroups = async (showLoading = false) => {
+  const refreshGroups = useCallback(async (showLoading = false) => {
     if (!authenticatedUser) return;
     try {
       if (showLoading) setGroupLoading(true);
@@ -225,7 +336,7 @@ function TravelPlanner() {
     } finally {
       if (showLoading) setGroupLoading(false);
     }
-  };
+  }, [authenticatedUser]);
 
   useEffect(() => {
     const syncSession = () => {
@@ -289,7 +400,7 @@ function TravelPlanner() {
   useEffect(() => {
     if (!authenticatedUser) return;
     refreshGroups(true);
-  }, [authenticatedUser]);
+  }, [authenticatedUser, refreshGroups]);
 
   useEffect(() => {
     if (!authenticatedUser) return;
@@ -413,6 +524,7 @@ function TravelPlanner() {
 
   const activeMessages = activeChatTripId ? messagesByTrip[activeChatTripId] || [] : [];
   const activeGroup = groups.find((group) => group.id === activeChatTripId);
+  const selectedTrip = groups.find((group) => group.id === tripDetailId);
 
   const setToastMessage = (title, subtitle) => {
     setToast({ title, subtitle, id: `${Date.now()}-${Math.random()}` });
@@ -433,6 +545,75 @@ function TravelPlanner() {
     );
     return mine?.status || null;
   };
+
+  const selectedTripStatus = selectedTrip ? getTripStatus(selectedTrip) : "Open";
+  const selectedTripSeatsLeft = selectedTrip
+    ? Math.max(selectedTrip.totalCount - selectedTrip.filledCount, 0)
+    : 0;
+  const selectedTripMyStatus = selectedTrip ? getMyRequestStatus(selectedTrip) : null;
+  const isSelectedTripHost = selectedTrip
+    ? normalizeEmail(selectedTrip.hostEmail) === normalizedUserEmail
+    : false;
+  const selectedTripParticipants = selectedTrip
+    ? [
+        {
+          id: "host",
+          name: selectedTrip.hostName,
+          email: selectedTrip.hostEmail || selectedTrip.hostName,
+          interest: "Host",
+          isHost: true,
+        },
+        ...(selectedTrip.joinRequests || [])
+          .filter((request) => request.status === "accepted")
+          .map((request) => ({
+            id: request.id,
+            name: request.userName,
+            email: request.userEmail || request.userName,
+            interest: request.userInterest || "Traveler",
+            isHost: false,
+          })),
+      ]
+    : [];
+  const marketplaceData = useMemo(
+    () => resolveMarketplaceForDestination(selectedTrip?.destination),
+    [selectedTrip?.destination]
+  );
+  const guideLanguageOptions = useMemo(() => {
+    const allLanguages = marketplaceData.guides.flatMap((guide) => guide.languages || []);
+    return ["Any", ...new Set(allLanguages)];
+  }, [marketplaceData.guides]);
+  const filteredGuides = useMemo(() => {
+    return marketplaceData.guides.filter((guide) => {
+      if (guideFilters.language !== "Any" && !guide.languages.includes(guideFilters.language)) {
+        return false;
+      }
+      if (guideFilters.priceRange !== "Any") {
+        if (guideFilters.priceRange === "Budget" && guide.pricePerDay > 4000) return false;
+        if (
+          guideFilters.priceRange === "Standard" &&
+          (guide.pricePerDay < 4000 || guide.pricePerDay > 5500)
+        ) {
+          return false;
+        }
+        if (guideFilters.priceRange === "Premium" && guide.pricePerDay < 5500) return false;
+      }
+      if (guideFilters.minRating !== "Any" && guide.rating < Number(guideFilters.minRating)) {
+        return false;
+      }
+      return true;
+    });
+  }, [guideFilters, marketplaceData.guides]);
+  const selectedTripServices = selectedTrip
+    ? tripServicesByTrip[selectedTrip.id] || { guide: null, vehicle: null }
+    : { guide: null, vehicle: null };
+  const serviceTravelerCount = selectedTrip
+    ? Math.max(selectedTripParticipants.length, selectedTrip.filledCount || 1)
+    : 1;
+  const canManageServices = Boolean(selectedTrip && isSelectedTripHost);
+  const selectedGuideId = selectedTripServices?.guide?.id || "";
+  const selectedVehicleId = selectedTripServices?.vehicle?.id || "";
+  const isGuideLocked = Boolean(selectedGuideId);
+  const isVehicleLocked = Boolean(selectedVehicleId);
 
   const toggleFilterChip = (chip) => {
     setSelectedChips((prev) => {
@@ -574,6 +755,26 @@ function TravelPlanner() {
     }
   };
 
+  const handleLeaveTrip = async (tripId, destination) => {
+    setLeaveSubmittingByTrip((prev) => ({ ...prev, [tripId]: true }));
+    try {
+      const response = await fetch(`${API_BASE}/api/travel-groups/${tripId}/leave`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userEmail: authenticatedUser.email }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data?.message || "Could not leave trip");
+      replaceGroup(data);
+      await refreshGroups();
+      setToastMessage("Trip left", `You left ${destination}`);
+    } catch (error) {
+      setToastMessage("Leave failed", error.message);
+    } finally {
+      setLeaveSubmittingByTrip((prev) => ({ ...prev, [tripId]: false }));
+    }
+  };
+
   const handleReviewJoinRequest = async (tripId, requestId, action, destination) => {
     const key = `${requestId}:${action}`;
     setReviewSubmittingByRequest((prev) => ({ ...prev, [key]: true }));
@@ -615,6 +816,11 @@ function TravelPlanner() {
         setActiveChatTripId("");
         setChatInput("");
       }
+      if (tripDetailId === tripId) {
+        setTripDetailId("");
+        setGuideProfile(null);
+        setBookingIntent(null);
+      }
       setToastMessage("Trip canceled", destination);
     } catch (error) {
       setToastMessage("Cancel failed", error.message);
@@ -649,6 +855,72 @@ function TravelPlanner() {
     setChatInput("");
   };
 
+  const handleOpenTripDetails = (tripId) => {
+    setTripDetailId(tripId);
+    setServicesActiveTab("guides");
+    setGuideFilters({ language: "Any", priceRange: "Any", minRating: "Any" });
+    setGuideProfile(null);
+    setBookingIntent(null);
+  };
+
+  const handleCloseTripDetails = () => {
+    setTripDetailId("");
+    setGuideProfile(null);
+    setBookingIntent(null);
+  };
+
+  const handleConfirmServiceBooking = (type, item) => {
+    if (!tripDetailId || !item || !canManageServices) return;
+    setTripServicesByTrip((prev) => ({
+      ...prev,
+      [tripDetailId]: {
+        ...(prev[tripDetailId] || {}),
+        [type]: item,
+      },
+    }));
+    setBookingIntent(null);
+    setToastMessage(
+      type === "guide" ? "Guide hired successfully" : "Vehicle booked successfully",
+      `${item.name || item.type} has been added to trip services`
+    );
+  };
+
+  const handleStartServiceBooking = (type, item) => {
+    if (!canManageServices) {
+      setToastMessage("Host only action", "Only trip host can hire guides or book vehicles.");
+      return;
+    }
+    if (type === "guide" && selectedGuideId && selectedGuideId !== item.id) return;
+    if (type === "vehicle" && selectedVehicleId && selectedVehicleId !== item.id) return;
+    setBookingIntent({ type, item });
+  };
+
+  const handleShareTrip = async (group) => {
+    if (!group) return;
+    const shareText = `${group.destination} Â· ${formatCompactDateRange(
+      group.startDate,
+      group.endDate
+    )}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: group.destination,
+          text: shareText,
+          url: window.location.href,
+        });
+        return;
+      }
+      await navigator.clipboard.writeText(`${shareText} | ${window.location.href}`);
+      setToastMessage("Trip link copied", "Share it with your travel partners");
+    } catch {
+      setToastMessage("Share unavailable", "Could not share this trip");
+    }
+  };
+
+  const handleViewProfile = (name) => {
+    setToastMessage("Profile preview", `Viewing ${name}'s profile`);
+  };
+
   const renderStatusBadge = (status) => {
     if (status === "pending") return <span className="tp-badge waiting">Waiting Approval</span>;
     if (status === "accepted") return <span className="tp-badge accepted">Accepted</span>;
@@ -666,6 +938,7 @@ function TravelPlanner() {
     const seatMessage = getSeatMessage(group.filledCount, group.totalCount);
     const socialProof = Math.max(group.filledCount - 1, 0);
     const unread = unreadByTrip[group.id] || 0;
+    const tripStatus = getTripStatus(group);
 
     const actionLabel = submitting
       ? "Requesting..."
@@ -678,13 +951,29 @@ function TravelPlanner() {
     const disableJoin = submitting || myStatus === "pending" || myStatus === "accepted";
 
     return (
-      <article key={group.id} className="tp-card">
+      <article
+        key={group.id}
+        className="tp-card tp-card-clickable"
+        role="button"
+        tabIndex={0}
+        onClick={() => handleOpenTripDetails(group.id)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            handleOpenTripDetails(group.id);
+          }
+        }}
+      >
         <div className="tp-card-image-wrap">
           <img src={getDestinationImage(group.destination)} alt={group.destination} />
         </div>
         <div className="tp-card-content">
           <div className="tp-card-top">
             <h3>{group.destination}</h3>
+            <div className="tp-card-status-row">
+              <span className={`tp-trip-status ${tripStatus.toLowerCase()}`}>{tripStatus}</span>
+              <small>{formatRelativeCreatedAt(group.createdAt)}</small>
+            </div>
             <p>{formatTripTiming(group.startDate, group.endDate)} | {group.hostInterest}</p>
             <p className="tp-emotion-line">
               Traveling with {Math.max(group.filledCount, 1)} strangers who love adventures
@@ -725,7 +1014,10 @@ function TravelPlanner() {
               <button
                 type="button"
                 className="tp-btn secondary"
-                onClick={() => handleDeleteTrip(group.id, group.destination)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleDeleteTrip(group.id, group.destination);
+                }}
                 disabled={Boolean(deleteSubmittingByTrip[group.id])}
               >
                 {deleteSubmittingByTrip[group.id] ? "Canceling..." : "Cancel Trip"}
@@ -734,14 +1026,24 @@ function TravelPlanner() {
               <button
                 type="button"
                 className="tp-btn primary"
-                onClick={() => handleRequestToJoin(group.id, group.destination)}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleRequestToJoin(group.id, group.destination);
+                }}
                 disabled={disableJoin}
               >
                 {actionLabel}
               </button>
             )}
             {renderStatusBadge(myStatus)}
-            <button type="button" className="tp-chat-btn" onClick={() => handleOpenChat(group.id)}>
+            <button
+              type="button"
+              className="tp-chat-btn"
+              onClick={(event) => {
+                event.stopPropagation();
+                handleOpenChat(group.id);
+              }}
+            >
               <span className="tp-chat-icon" aria-hidden="true" />
               <span>Chat</span>
               {unread > 0 ? <span className="tp-unread">{unread}</span> : null}
@@ -1248,6 +1550,353 @@ function TravelPlanner() {
         </div>
       ) : null}
 
+      {selectedTrip ? (
+        <div
+          className="tp-trip-details-overlay"
+          role="presentation"
+          onClick={handleCloseTripDetails}
+        >
+          <section className="tp-trip-details-modal" onClick={(event) => event.stopPropagation()}>
+            <div className="tp-trip-details-head">
+              <div className="tp-trip-title-wrap">
+                <h3>{selectedTrip.destination}</h3>
+                <p className="tp-trip-created">{formatRelativeCreatedAt(selectedTrip.createdAt)}</p>
+                <p className="tp-trip-location">
+                  <span aria-hidden="true">??</span>
+                  {getDestinationLocation(selectedTrip.destination)}
+                </p>
+                <p className="tp-trip-date-line">
+                  <span aria-hidden="true">??</span>
+                  {formatCompactDateRange(selectedTrip.startDate, selectedTrip.endDate)}
+                </p>
+              </div>
+              <div className="tp-trip-head-actions">
+                <span className={`tp-trip-status ${selectedTripStatus.toLowerCase()}`}>
+                  {selectedTripStatus}
+                </span>
+                <button
+                  type="button"
+                  className="tp-btn secondary"
+                  onClick={() => handleShareTrip(selectedTrip)}
+                >
+                  Share Trip
+                </button>
+                <button type="button" className="tp-btn secondary" onClick={handleCloseTripDetails}>
+                  Close
+                </button>
+              </div>
+            </div>
+
+            <div className="tp-trip-details-grid">
+              <article className="tp-trip-detail-card">
+                <h4>Important Details</h4>
+                <div className="tp-detail-grid">
+                  <div className="tp-detail-item">
+                    <span className="tp-detail-label">?? Start</span>
+                    <strong>{formatFullDate(selectedTrip.startDate)}</strong>
+                  </div>
+                  <div className="tp-detail-item">
+                    <span className="tp-detail-label">?? End</span>
+                    <strong>{formatFullDate(selectedTrip.endDate)}</strong>
+                  </div>
+                  <div className="tp-detail-item">
+                    <span className="tp-detail-label">?? Host</span>
+                    <strong>{selectedTrip.hostName}</strong>
+                  </div>
+                  <div className="tp-detail-item">
+                    <span className="tp-detail-label">?? Seats</span>
+                    <strong>
+                      {selectedTrip.filledCount}/{selectedTrip.totalCount}
+                    </strong>
+                  </div>
+                </div>
+                <div className="tp-seat-visual">
+                  <div
+                    className="tp-seat-progress"
+                    style={{
+                      "--fill": `${Math.min(
+                        100,
+                        Math.round((selectedTrip.filledCount / Math.max(1, selectedTrip.totalCount)) * 100)
+                      )}%`,
+                    }}
+                  >
+                    <span />
+                  </div>
+                  <p className={`tp-seat-urgency ${getSeatsRemainingMeta(selectedTripSeatsLeft).tone}`}>
+                    {Array.from({ length: selectedTrip.totalCount }).map((_, index) => (
+                      <span key={index}>{index < selectedTrip.filledCount ? "??" : "?"}</span>
+                    ))}{" "}
+                    {getSeatsRemainingMeta(selectedTripSeatsLeft).label}
+                  </p>
+                </div>
+              </article>
+
+              <article className="tp-trip-detail-card">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+                  Participants
+                </p>
+                <h4>People Coming</h4>
+                <div className="tp-avatar-stack" aria-hidden="true">
+                  {selectedTripParticipants.slice(0, 5).map((person, index) => (
+                    <span
+                      key={`${person.id}-${index}`}
+                      className="tp-avatar soft stack"
+                      style={{ "--stack-index": index }}
+                    >
+                      {getInitials(person.name)}
+                    </span>
+                  ))}
+                </div>
+                <div className="tp-trip-people-list">
+                  <div className="tp-trip-person-row rich">
+                    <span className="tp-avatar soft">{getInitials(selectedTrip.hostName)}</span>
+                    <div className="tp-person-main">
+                      <strong>{selectedTrip.hostName}</strong>
+                      <p>
+                        {(() => {
+                          const hostProfile = getTravelerProfile(
+                            selectedTrip.hostEmail || selectedTrip.hostName
+                          );
+                          return `Age ${hostProfile.age} Â· ${hostProfile.city} Â· ? ${hostProfile.rating}`;
+                        })()}
+                      </p>
+                    </div>
+                    <em className="tp-person-badge">Host</em>
+                    <button
+                      type="button"
+                      className="tp-profile-link"
+                      onClick={() => handleViewProfile(selectedTrip.hostName)}
+                    >
+                      View Profile
+                    </button>
+                  </div>
+                  {(selectedTrip.joinRequests || [])
+                    .filter((request) => request.status === "accepted")
+                    .map((request) => (
+                      <div key={request.id} className="tp-trip-person-row rich">
+                        <span className="tp-avatar soft">{getInitials(request.userName)}</span>
+                        <div className="tp-person-main">
+                          <strong>{request.userName}</strong>
+                          <p>
+                            {(() => {
+                              const traveler = getTravelerProfile(request.userEmail || request.userName);
+                              return `Age ${traveler.age} Â· ${traveler.city} Â· ? ${traveler.rating}`;
+                            })()}
+                          </p>
+                        </div>
+                        <em>{request.userInterest || "Traveler"}</em>
+                        <button
+                          type="button"
+                          className="tp-profile-link"
+                          onClick={() => handleViewProfile(request.userName)}
+                        >
+                          View Profile
+                        </button>
+                      </div>
+                    ))}
+                </div>
+              </article>
+            </div>
+
+            <div className="tp-trip-actions-detail">
+              {!isSelectedTripHost && selectedTripMyStatus !== "accepted" ? (
+                <button
+                  type="button"
+                  className="tp-btn primary"
+                  onClick={() => handleRequestToJoin(selectedTrip.id, selectedTrip.destination)}
+                  disabled={
+                    Boolean(requestSubmittingByTrip[selectedTrip.id]) ||
+                    selectedTripMyStatus === "pending" ||
+                    selectedTripStatus !== "Open"
+                  }
+                >
+                  {requestSubmittingByTrip[selectedTrip.id]
+                    ? "Requesting..."
+                    : selectedTripMyStatus === "pending"
+                    ? "Request Sent"
+                    : "Join Trip"}
+                </button>
+              ) : null}
+              {!isSelectedTripHost && selectedTripMyStatus === "accepted" ? (
+                <button
+                  type="button"
+                  className="tp-btn secondary"
+                  onClick={() => handleLeaveTrip(selectedTrip.id, selectedTrip.destination)}
+                  disabled={Boolean(leaveSubmittingByTrip[selectedTrip.id])}
+                >
+                  {leaveSubmittingByTrip[selectedTrip.id] ? "Leaving..." : "Leave Trip"}
+                </button>
+              ) : null}
+            </div>
+
+            <article className="tp-trip-detail-card">
+              <div className="mb-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+                  Services
+                </p>
+                <h4 className="text-lg font-bold text-slate-900">Tourist Guides & Local Services</h4>
+                <p className="mt-1 text-sm text-slate-600">
+                  Browse verified experts and local transport options for {selectedTrip.destination}.
+                </p>
+                <p className="mt-1 text-xs font-medium text-slate-500">
+                  {canManageServices
+                    ? "You are the host. You can lock one guide and one vehicle selection."
+                    : "Read-only view. Only host can modify services."}
+                </p>
+              </div>
+
+              <div className="mb-3 grid gap-2 rounded-[16px] border border-slate-200 bg-white p-3 md:grid-cols-2">
+                <p className="text-sm font-medium text-slate-700">
+                  {selectedTripServices?.guide
+                    ? `?? ${selectedTripServices.guide.name} (Selected)`
+                    : "Guide: Not selected"}
+                </p>
+                <p className="text-sm font-medium text-slate-700">
+                  {selectedTripServices?.vehicle
+                    ? `?? ${selectedTripServices.vehicle.type} (Selected)`
+                    : "Vehicle: Not selected"}
+                </p>
+              </div>
+
+              <ServicesTabs activeTab={servicesActiveTab} onTabChange={setServicesActiveTab} />
+
+              {servicesActiveTab === "guides" ? (
+                <div className="mt-4 grid gap-4">
+                  <div className="grid gap-2 rounded-[18px] border border-slate-200 bg-white p-3 md:grid-cols-3">
+                    <label className="grid gap-1 text-xs font-semibold text-slate-500">
+                      Language
+                      <select
+                        value={guideFilters.language}
+                        onChange={(event) =>
+                          setGuideFilters((prev) => ({ ...prev, language: event.target.value }))
+                        }
+                        className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                      >
+                        {guideLanguageOptions.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="grid gap-1 text-xs font-semibold text-slate-500">
+                      Price Range
+                      <select
+                        value={guideFilters.priceRange}
+                        onChange={(event) =>
+                          setGuideFilters((prev) => ({ ...prev, priceRange: event.target.value }))
+                        }
+                        className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                      >
+                        <option value="Any">Any</option>
+                        <option value="Budget">Budget</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Premium">Premium</option>
+                      </select>
+                    </label>
+                    <label className="grid gap-1 text-xs font-semibold text-slate-500">
+                      Rating
+                      <select
+                        value={guideFilters.minRating}
+                        onChange={(event) =>
+                          setGuideFilters((prev) => ({ ...prev, minRating: event.target.value }))
+                        }
+                        className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700"
+                      >
+                        <option value="Any">Any</option>
+                        <option value="4.5">4.5+</option>
+                        <option value="4.8">4.8+</option>
+                        <option value="4.9">4.9+</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  {filteredGuides.length ? (
+                    <div className="grid gap-3 md:grid-cols-2">
+                      {filteredGuides.map((guide) => (
+                        <GuideCard
+                          key={guide.id}
+                          guide={guide}
+                          isSelected={selectedGuideId === guide.id}
+                          isLocked={isGuideLocked}
+                          canManageServices={canManageServices}
+                          onViewProfile={setGuideProfile}
+                          onHire={(item) => handleStartServiceBooking("guide", item)}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-[18px] border border-dashed border-slate-300 bg-slate-50 p-5 text-center">
+                      <p className="text-sm font-semibold text-slate-700">
+                        No verified guides available yet for this destination.
+                      </p>
+                      <p className="mt-1 text-sm text-slate-500">
+                        Request a guide and weâ€™ll notify locals.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  {marketplaceData.vehicles.map((vehicle) => (
+                    <VehicleCard
+                      key={vehicle.id}
+                      vehicle={vehicle}
+                      isSelected={selectedVehicleId === vehicle.id}
+                      isLocked={isVehicleLocked}
+                      canManageServices={canManageServices}
+                      onBook={(item) => handleStartServiceBooking("vehicle", item)}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 grid gap-3 rounded-[18px] border border-slate-200 bg-white p-4 md:grid-cols-3">
+                <div className="rounded-xl bg-slate-50 p-3 text-center text-xs font-semibold text-slate-700">
+                  Government ID Verified
+                </div>
+                <div className="rounded-xl bg-slate-50 p-3 text-center text-xs font-semibold text-slate-700">
+                  Background Verified
+                </div>
+                <div className="rounded-xl bg-indigo-50 p-3 text-center text-xs font-semibold text-indigo-700">
+                  4.8+ Rating Highlight
+                </div>
+              </div>
+            </article>
+
+            <article className="tp-trip-detail-card">
+              <div className="mb-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+                  Expenses
+                </p>
+                <h4 className="text-lg font-bold text-slate-900">Trip Service Costs</h4>
+              </div>
+              <BookingSummary
+                services={selectedTripServices}
+                travelerCount={serviceTravelerCount}
+                canManageServices={canManageServices}
+              />
+            </article>
+          </section>
+        </div>
+      ) : null}
+
+      <GuideProfileModal
+        guide={guideProfile}
+        onClose={() => setGuideProfile(null)}
+        onBook={(guide) => {
+          setGuideProfile(null);
+          handleStartServiceBooking("guide", guide);
+        }}
+        canManageServices={canManageServices}
+      />
+
+      <BookingConfirmationModal
+        bookingIntent={bookingIntent}
+        onClose={() => setBookingIntent(null)}
+        onConfirm={handleConfirmServiceBooking}
+      />
+
       <aside className={`tp-chat ${activeChatTripId ? "open" : ""}`}>
         <header>
           <h4>{activeGroup ? `${activeGroup.destination} Chat` : "Trip Chat"}</h4>
@@ -1294,4 +1943,10 @@ function TravelPlanner() {
 }
 
 export default TravelPlanner;
+
+
+
+
+
+
 

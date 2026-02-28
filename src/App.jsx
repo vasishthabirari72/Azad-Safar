@@ -7,6 +7,7 @@ import Home from "./home.jsx";
 import Explore from "./explore.jsx";
 import Search from "./search.jsx";
 import TravelPlanner from "./travelPlanner.jsx";
+import Contact from "./contact.jsx";
 
 
 
@@ -22,6 +23,7 @@ function App() {
          <Route path="/search" element={<Search />}/>
          <Route path="/travel-partner" element={<TravelPlanner />} />
          <Route path="/travel-planner" element={<Navigate to="/travel-partner" replace />} />
+         <Route path="/contact" element={<Contact />} />
       </Routes>
 
       <Footer />
