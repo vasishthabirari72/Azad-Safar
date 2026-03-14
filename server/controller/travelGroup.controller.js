@@ -7,12 +7,10 @@ const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
 const getTravelGroups = async (req, res) => {
   try {
     const { destination = "" } = req.query;
-
     const query = {};
     if (destination.trim()) {
       query.destination = { $regex: destination.trim(), $options: "i" };
     }
-
     const groups = await TravelGroup.find(query).sort({ createdAt: -1 });
     res.status(200).json(groups);
   } catch (error) {
@@ -65,6 +63,8 @@ const createTravelGroup = async (req, res) => {
   }
 };
 
+// NOTE: This route bypasses the join request flow entirely.
+// It is kept for potential admin use only — the frontend uses createJoinRequest instead.
 const joinTravelGroup = async (req, res) => {
   try {
     const { id } = req.params;
@@ -188,7 +188,6 @@ const reviewJoinRequest = async (req, res) => {
 
     requestItem.respondedAt = new Date();
     await group.save();
-
     res.status(200).json(group);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -261,7 +260,63 @@ const removeAcceptedMember = async (req, res) => {
 
     requestItem.status = "declined";
     requestItem.respondedAt = new Date();
-    group.filledCount = Math.max(group.filledCount - 1, 1);
+
+    // FIX: recalculate from actual accepted count instead of blind decrement
+    const acceptedCount = group.joinRequests.filter(
+      (r) => r.status === "accepted" && String(r._id) !== String(requestItem._id)
+    ).length;
+    group.filledCount = acceptedCount + 1; // +1 for the host
+
+    await group.save();
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const leaveTravelGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userEmail } = req.body;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid group id" });
+    }
+
+    const email = normalizeEmail(userEmail);
+    if (!email) {
+      return res.status(400).json({ message: "Missing traveler email" });
+    }
+
+    const group = await TravelGroup.findById(id);
+    if (!group) {
+      return res.status(404).json({ message: "Group does not exist" });
+    }
+
+    if (normalizeEmail(group.hostEmail) === email) {
+      return res.status(409).json({ message: "Host cannot leave hosted trip" });
+    }
+
+    const requestItem = group.joinRequests.find(
+      (request) => normalizeEmail(request.userEmail) === email
+    );
+
+    if (!requestItem) {
+      return res.status(404).json({ message: "You are not part of this trip" });
+    }
+
+    if (requestItem.status !== "accepted") {
+      return res.status(409).json({ message: "Only accepted travelers can leave" });
+    }
+
+    requestItem.status = "declined";
+    requestItem.respondedAt = new Date();
+
+    // FIX: recalculate from actual accepted count instead of blind decrement
+    const acceptedCount = group.joinRequests.filter(
+      (r) => r.status === "accepted" && String(r._id) !== String(requestItem._id)
+    ).length;
+    group.filledCount = acceptedCount + 1; // +1 for the host
 
     await group.save();
     res.status(200).json(group);
@@ -302,7 +357,10 @@ const getTripMessages = async (req, res) => {
       return res.status(400).json({ message: "Invalid group id" });
     }
 
-    const messages = await TripMessage.find({ tripId: id }).sort({ createdAt: 1 }).limit(200);
+    const messages = await TripMessage.find({ tripId: id })
+      .sort({ createdAt: 1 })
+      .limit(200);
+
     res.status(200).json(
       messages.map((item) => ({
         tripId: String(item.tripId),
@@ -325,6 +383,7 @@ module.exports = {
   createJoinRequest,
   reviewJoinRequest,
   removeAcceptedMember,
+  leaveTravelGroup,
   deleteTravelGroup,
   getTripMessages
 };

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./navabar.css";
 
 const LOCAL_SESSION_KEY = "travel_partner_session_v1";
@@ -33,6 +33,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const syncSession = () => setUser(getSessionUser());
@@ -61,6 +62,12 @@ function Navbar() {
     setMenuOpen(false);
   };
 
+  // FIX: TravelPlanner reads tab from searchParams (?tab=), so navigate with search, not hash
+  const goToTab = (tab) => {
+    setMenuOpen(false);
+    navigate(`/travel-partner?tab=${tab}`);
+  };
+
   return (
     <header className="premium-navbar">
       <div className="premium-navbar-inner">
@@ -78,7 +85,9 @@ function Navbar() {
           <NavLink to="/travel-partner" className={navClassName}>
             Travel Partner
           </NavLink>
-          <a href="#">Tourist Guides</a>
+          <NavLink to="/guides" className={navClassName}>
+            Tourist Guides
+          </NavLink>
           <NavLink to="/contact" className={navClassName}>
             Contact
           </NavLink>
@@ -99,15 +108,15 @@ function Navbar() {
               </button>
               {menuOpen ? (
                 <div className="premium-dropdown">
-                  <Link to="/travel-partner?tab=myTrips" onClick={() => setMenuOpen(false)}>
+                  <button type="button" onClick={() => goToTab("myTrips")}>
                     My Trips
-                  </Link>
-                  <Link to="/travel-partner?tab=requests" onClick={() => setMenuOpen(false)}>
+                  </button>
+                  <button type="button" onClick={() => goToTab("requests")}>
                     Requests
-                  </Link>
-                  <Link to="/travel-partner?tab=hosting" onClick={() => setMenuOpen(false)}>
+                  </button>
+                  <button type="button" onClick={() => goToTab("hosting")}>
                     Profile
-                  </Link>
+                  </button>
                   <button type="button" onClick={handleLogout}>
                     Logout
                   </button>
@@ -115,7 +124,7 @@ function Navbar() {
               ) : null}
             </>
           ) : (
-            <NavLink to="/travel-partner" className="premium-login">
+            <NavLink to="/auth" className="premium-login">
               Login
             </NavLink>
           )}

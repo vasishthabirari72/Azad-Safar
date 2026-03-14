@@ -10,69 +10,66 @@ function Explore() {
 
   const [selectedState, setSelectedState] = useState("");
   const [selectedCity, setSelectedCity] = useState("");
-  
-  // 🆕 Loading states
+
   const [loadingStates, setLoadingStates] = useState(true);
   const [loadingCities, setLoadingCities] = useState(false);
   const [loadingPlaces, setLoadingPlaces] = useState(false);
 
-  /* =========================
-     FETCH STATES WITH IMAGES
-  ========================== */
+  /* FETCH STATES */
   useEffect(() => {
     fetch(`${API}/states-with-images`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         setStates(data);
         setLoadingStates(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("States error:", err);
         setLoadingStates(false);
       });
   }, []);
 
-  /* =========================
-     FETCH CITIES WITH IMAGES
-  ========================== */
+  /* FETCH CITIES
+     FIX: setLoadingCities(true) moved here instead of only in the click handler,
+     so the spinner shows even if selectedState changes from outside a click (e.g. browser back) */
   useEffect(() => {
     if (!selectedState) return;
 
-    fetch(`${API}/cities-with-images?state=${selectedState}`)
-      .then(res => res.json())
-      .then(data => {
+    setLoadingCities(true);
+
+    fetch(`${API}/cities-with-images?state=${encodeURIComponent(selectedState)}`)
+      .then((res) => res.json())
+      .then((data) => {
         setCities(data);
         setPlaces([]);
         setSelectedCity("");
         setLoadingCities(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Cities error:", err);
         setLoadingCities(false);
       });
   }, [selectedState]);
 
-  /* =========================
-     FETCH PLACES BY CITY
-  ========================== */
+  /* FETCH PLACES */
   useEffect(() => {
     if (!selectedCity) return;
 
-    fetch(`${API}/by-city?city=${selectedCity}`)
-      .then(res => res.json())
-      .then(data => {
+    setLoadingPlaces(true);
+
+    fetch(`${API}/by-city?city=${encodeURIComponent(selectedCity)}`)
+      .then((res) => res.json())
+      .then((data) => {
         setPlaces(data);
         setLoadingPlaces(false);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Places error:", err);
         setLoadingPlaces(false);
       });
   }, [selectedCity]);
 
-  /* =========================
-     🆕 NAVIGATION HANDLERS
-  ========================== */
+  /* NAVIGATION HANDLERS */
   const handleBackToStates = () => {
     setSelectedState("");
     setSelectedCity("");
@@ -88,13 +85,12 @@ function Explore() {
     setLoadingPlaces(false);
   };
 
+  // FIX: removed setLoadingCities(true) from here since useEffect now handles it
   const handleStateSelect = (stateName) => {
-    setLoadingCities(true);
     setSelectedState(stateName);
   };
 
   const handleCitySelect = (cityName) => {
-    setLoadingPlaces(true);
     setSelectedCity(cityName);
   };
 
@@ -102,13 +98,11 @@ function Explore() {
     <section className="explore-section" style={{ padding: "2rem" }}>
       <h1 className="section-title">Explore India</h1>
 
-      {/* =========================
-          STATE CARDS
-      ========================== */}
+      {/* STATE CARDS */}
       {!selectedState && (
         <>
           <h2 style={{ color: "white", marginBottom: "1.5rem" }}>Select a State</h2>
-          
+
           {loadingStates ? (
             <div style={{ textAlign: "center", padding: "3rem" }}>
               <div className="spinner"></div>
@@ -124,10 +118,7 @@ function Explore() {
                   style={{ cursor: "pointer" }}
                 >
                   <Card
-                    place={{
-                      title: item.state,
-                      image: item.image
-                    }}
+                    place={{ title: item.state, image: item.image }}
                     disableLink={true}
                   />
                 </div>
@@ -137,13 +128,11 @@ function Explore() {
         </>
       )}
 
-      {/* =========================
-          CITY CARDS
-      ========================== */}
+      {/* CITY CARDS */}
       {selectedState && !selectedCity && (
         <>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-            <button 
+            <button
               onClick={handleBackToStates}
               className="back-btn-explore"
               style={{
@@ -156,14 +145,14 @@ function Explore() {
                 fontSize: "1rem",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.5rem"
+                gap: "0.5rem",
               }}
             >
               ← Back to States
             </button>
             <h2 style={{ color: "white", margin: 0 }}>{selectedState}</h2>
           </div>
-          
+
           <h3 style={{ color: "white", marginBottom: "1.5rem" }}>Select a City</h3>
 
           {loadingCities ? (
@@ -181,10 +170,7 @@ function Explore() {
                   style={{ cursor: "pointer" }}
                 >
                   <Card
-                    place={{
-                      title: cityItem.city,
-                      image: cityItem.image
-                    }}
+                    place={{ title: cityItem.city, image: cityItem.image }}
                     disableLink={true}
                   />
                 </div>
@@ -194,13 +180,11 @@ function Explore() {
         </>
       )}
 
-      {/* =========================
-          PLACES GRID
-      ========================== */}
-      {places.length > 0 && (
+      {/* PLACES GRID */}
+      {selectedCity && (
         <>
           <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1.5rem" }}>
-            <button 
+            <button
               onClick={handleBackToCities}
               className="back-btn-explore"
               style={{
@@ -213,7 +197,7 @@ function Explore() {
                 fontSize: "1rem",
                 display: "flex",
                 alignItems: "center",
-                gap: "0.5rem"
+                gap: "0.5rem",
               }}
             >
               ← Back to Cities
@@ -228,13 +212,12 @@ function Explore() {
               <div className="spinner"></div>
               <p style={{ color: "white", marginTop: "1rem" }}>Loading places...</p>
             </div>
+          ) : places.length === 0 ? (
+            <p style={{ color: "white" }}>No places found for {selectedCity}.</p>
           ) : (
             <div className="img-row">
-              {places.map(place => (
-                <Card
-                  key={place.id}
-                  place={place}
-                />
+              {places.map((place) => (
+                <Card key={place.id} place={place} />
               ))}
             </div>
           )}
@@ -242,7 +225,6 @@ function Explore() {
       )}
 
       <style>{`
-        /* 🆕 Spinner Animation */
         .spinner {
           border: 4px solid rgba(108, 99, 255, 0.1);
           border-top: 4px solid #6c63ff;
@@ -252,47 +234,31 @@ function Explore() {
           animation: spin 1s linear infinite;
           margin: 0 auto;
         }
-
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
         }
-
-        /* 🆕 Smooth Card Animations */
         .explore-grid {
           animation: fadeIn 0.5s ease-in;
         }
-
         @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
-
         .explore-card {
           transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
         .explore-card:hover {
           transform: translateY(-5px);
         }
-
-        /* 🆕 Back Button Hover Effect */
         .back-btn-explore:hover {
-          background-color: #5848e6;
+          background-color: #5848e6 !important;
           transform: scale(1.05);
           transition: all 0.2s ease;
         }
-
         .back-btn-explore:active {
           transform: scale(0.98);
         }
-
       `}</style>
     </section>
   );

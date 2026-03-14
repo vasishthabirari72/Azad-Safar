@@ -9,6 +9,7 @@ const {
   createJoinRequest,
   reviewJoinRequest,
   removeAcceptedMember,
+  leaveTravelGroup,
   deleteTravelGroup,
   getTripMessages
 } = require("../controller/travelGroup.controller");
@@ -20,6 +21,7 @@ router.post("/:id/join", joinTravelGroup);
 router.post("/:id/request", createJoinRequest);
 router.patch("/:id/requests/:requestId", reviewJoinRequest);
 router.patch("/:id/requests/:requestId/remove", removeAcceptedMember);
+router.patch("/:id/leave", leaveTravelGroup);
 router.delete("/:id", deleteTravelGroup);
 router.get("/:id/messages", getTripMessages);
 

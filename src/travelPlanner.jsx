@@ -1,4 +1,5 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import "./travelPlanner.css";
 import {
@@ -13,6 +14,7 @@ import {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || API_BASE;
+const AUTH_API = `${API_BASE}/api/auth`;
 
 const INTEREST_OPTIONS = ["Adventure", "Spiritual", "Luxury", "Budget"];
 const LOCAL_USERS_KEY = "travel_partner_users_v1";
@@ -48,6 +50,7 @@ const DESTINATION_IMAGES = {
   andaman: "/images/andaman islands.jpg",
   gateway: "/images/Gate way of india.JPG",
 };
+
 const DESTINATION_LOCATIONS = {
   amritsar: "Amritsar, Punjab",
   "taj mahal": "Agra, Uttar Pradesh",
@@ -61,6 +64,7 @@ const DESTINATION_LOCATIONS = {
   ajanta: "Aurangabad, Maharashtra",
   ellora: "Aurangabad, Maharashtra",
 };
+
 const PROFILE_CITIES = ["Mumbai", "Pune", "Aurangabad", "Nashik", "Nagpur", "Thane"];
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
@@ -127,18 +131,13 @@ const formatCompactDateRange = (startDate, endDate) => {
   const end = new Date(endDate);
   if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return "Dates not set";
   const days = Math.max(1, Math.ceil((end - start) / 86400000));
-  const sameMonth = start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
+  const sameMonth =
+    start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear();
   const sameYear = start.getFullYear() === end.getFullYear();
   const startDay = start.toLocaleDateString("en-IN", { day: "numeric" });
   const endDay = end.toLocaleDateString("en-IN", { day: "numeric" });
-  const startMonthYear = start.toLocaleDateString("en-IN", {
-    month: "short",
-    year: "numeric",
-  });
-  const endMonthYear = end.toLocaleDateString("en-IN", {
-    month: "short",
-    year: "numeric",
-  });
+  const startMonthYear = start.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
+  const endMonthYear = end.toLocaleDateString("en-IN", { month: "short", year: "numeric" });
 
   const dateText = sameMonth
     ? `${startDay}-${endDay} ${startMonthYear}`
@@ -146,7 +145,8 @@ const formatCompactDateRange = (startDate, endDate) => {
     ? `${startDay} ${start.toLocaleDateString("en-IN", { month: "short" })} - ${endDay} ${endMonthYear}`
     : `${startDay} ${startMonthYear} - ${endDay} ${endMonthYear}`;
 
-  return `${dateText} Â· ${days} Day${days > 1 ? "s" : ""}`;
+  // FIX: was "Â·" (UTF-8 encoding corruption) — correct middle dot
+  return `${dateText} · ${days} Day${days > 1 ? "s" : ""}`;
 };
 
 const formatTripTiming = (startDate, endDate) => {
@@ -164,14 +164,11 @@ const formatFullDate = (value) => {
   if (!value) return "Not set";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Not set";
-  return date.toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  return date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 };
 
-const hashScore = (text) => Array.from(String(text || "")).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+const hashScore = (text) =>
+  Array.from(String(text || "")).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
 
 const getHostTrust = (group) => {
   const score = hashScore(group.hostEmail || group.hostName);
@@ -252,23 +249,31 @@ const getTravelerProfile = (seedValue) => {
 };
 
 const getSeatsRemainingMeta = (seatsLeft) => {
-  if (seatsLeft <= 0) return { tone: "full", label: "? Trip full" };
-  if (seatsLeft === 1) return { tone: "last", label: "?? Last seat!" };
-  if (seatsLeft <= 2) return { tone: "few", label: `?? ${seatsLeft} seats remaining` };
-  return { tone: "many", label: `?? ${seatsLeft} seats remaining` };
+  if (seatsLeft <= 0) return { tone: "full", label: "Trip full" };
+  if (seatsLeft === 1) return { tone: "last", label: "Last seat!" };
+  if (seatsLeft <= 2) return { tone: "few", label: `${seatsLeft} seats remaining` };
+  return { tone: "many", label: `${seatsLeft} seats remaining` };
 };
 
-const getTabFromHash = () => {
-  const hash = window.location.hash || "";
-  const query = hash.includes("?") ? hash.slice(hash.indexOf("?") + 1) : "";
-  const params = new URLSearchParams(query);
-  const tab = params.get("tab");
-  if (TAB_ITEMS.some((item) => item.id === tab)) return tab;
-  return "discover";
-};
+// FIX: was reading from window.location.hash — TravelPlanner now uses useSearchParams
+// so the Navbar can navigate with ?tab= and the tab actually switches
+const VALID_TABS = new Set(TAB_ITEMS.map((t) => t.id));
 
 function TravelPlanner() {
-  const [activeTab, setActiveTab] = useState("discover");
+  // FIX: read tab from URL search params (?tab=myTrips) instead of hash
+  const [searchParams] = useSearchParams();
+  const tabFromUrl = searchParams.get("tab");
+  const [activeTab, setActiveTab] = useState(
+    tabFromUrl && VALID_TABS.has(tabFromUrl) ? tabFromUrl : "discover"
+  );
+
+  // Sync tab when URL param changes (e.g. Navbar dropdown click)
+  useEffect(() => {
+    if (tabFromUrl && VALID_TABS.has(tabFromUrl)) {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
+
   const [authMode, setAuthMode] = useState("login");
   const [authMessage, setAuthMessage] = useState("");
   const [authForm, setAuthForm] = useState({
@@ -323,33 +328,29 @@ function TravelPlanner() {
   const chatMessagesRef = useRef(null);
   const toastTimerRef = useRef(null);
 
-  const refreshGroups = useCallback(async (showLoading = false) => {
-    if (!authenticatedUser) return;
-    try {
-      if (showLoading) setGroupLoading(true);
-      const response = await fetch(`${API_BASE}/api/travel-groups`);
-      if (!response.ok) return;
-      const data = await response.json();
-      setGroups((data || []).map(mapGroup));
-    } catch {
-      return;
-    } finally {
-      if (showLoading) setGroupLoading(false);
-    }
-  }, [authenticatedUser]);
+  const refreshGroups = useCallback(
+    async (showLoading = false) => {
+      if (!authenticatedUser) return;
+      try {
+        if (showLoading) setGroupLoading(true);
+        const response = await fetch(`${API_BASE}/api/travel-groups`);
+        if (!response.ok) return;
+        const data = await response.json();
+        setGroups((data || []).map(mapGroup));
+      } catch {
+        return;
+      } finally {
+        if (showLoading) setGroupLoading(false);
+      }
+    },
+    [authenticatedUser]
+  );
 
   useEffect(() => {
-    const syncSession = () => {
-      const session = getSessionUser();
-      setAuthenticatedUser(session);
-    };
-
+    const syncSession = () => setAuthenticatedUser(getSessionUser());
     syncSession();
-    setActiveTab(getTabFromHash());
-
     window.addEventListener("storage", syncSession);
     window.addEventListener(AUTH_EVENT, syncSession);
-
     return () => {
       window.removeEventListener("storage", syncSession);
       window.removeEventListener(AUTH_EVENT, syncSession);
@@ -378,10 +379,7 @@ function TravelPlanner() {
           ? existing.some((msg) => msg.messageId === incoming.messageId)
           : false;
         if (isDuplicate) return prev;
-        return {
-          ...prev,
-          [incoming.tripId]: [...existing, incoming],
-        };
+        return { ...prev, [incoming.tripId]: [...existing, incoming] };
       });
       if (incoming.tripId !== activeChatTripId) {
         setUnreadByTrip((prev) => ({
@@ -424,10 +422,7 @@ function TravelPlanner() {
   );
 
   const myHostedGroups = useMemo(
-    () =>
-      groups.filter(
-        (group) => normalizeEmail(group.hostEmail) === normalizedUserEmail
-      ),
+    () => groups.filter((group) => normalizeEmail(group.hostEmail) === normalizedUserEmail),
     [groups, normalizedUserEmail]
   );
 
@@ -457,33 +452,14 @@ function TravelPlanner() {
 
   const hostedTripReports = useMemo(() => {
     return myHostedGroups.map((group) => {
-      const accepted = (group.joinRequests || []).filter(
-        (request) => request.status === "accepted"
-      );
-      const pending = (group.joinRequests || []).filter(
-        (request) => request.status === "pending"
-      );
+      const accepted = (group.joinRequests || []).filter((r) => r.status === "accepted");
+      const pending = (group.joinRequests || []).filter((r) => r.status === "pending");
       return {
         group,
         people: [
-          {
-            name: group.hostName,
-            email: group.hostEmail || "Not shared",
-            role: "Host",
-            status: "accepted",
-          },
-          ...accepted.map((request) => ({
-            name: request.userName,
-            email: request.userEmail,
-            role: "Traveler",
-            status: "accepted",
-          })),
-          ...pending.map((request) => ({
-            name: request.userName,
-            email: request.userEmail,
-            role: "Traveler",
-            status: "pending",
-          })),
+          { name: group.hostName, email: group.hostEmail || "Not shared", role: "Host", status: "accepted" },
+          ...accepted.map((r) => ({ name: r.userName, email: r.userEmail, role: "Traveler", status: "accepted" })),
+          ...pending.map((r) => ({ name: r.userName, email: r.userEmail, role: "Traveler", status: "pending" })),
         ],
       };
     });
@@ -493,9 +469,7 @@ function TravelPlanner() {
     () =>
       myHostedGroups.reduce(
         (count, group) =>
-          count +
-          (group.joinRequests || []).filter((request) => request.status === "pending")
-            .length,
+          count + (group.joinRequests || []).filter((r) => r.status === "pending").length,
         0
       ),
     [myHostedGroups]
@@ -513,7 +487,6 @@ function TravelPlanner() {
       .filter((group) => {
         if (selectedChips.has("Verified") && !group.hostVerified) return false;
         if (selectedChips.has("Girls Only")) return false;
-        if (selectedChips.has("Age 18-25")) return true;
         return true;
       })
       .filter((group) => {
@@ -564,45 +537,49 @@ function TravelPlanner() {
           isHost: true,
         },
         ...(selectedTrip.joinRequests || [])
-          .filter((request) => request.status === "accepted")
-          .map((request) => ({
-            id: request.id,
-            name: request.userName,
-            email: request.userEmail || request.userName,
-            interest: request.userInterest || "Traveler",
+          .filter((r) => r.status === "accepted")
+          .map((r) => ({
+            id: r.id,
+            name: r.userName,
+            email: r.userEmail || r.userName,
+            interest: r.userInterest || "Traveler",
             isHost: false,
           })),
       ]
     : [];
+
   const marketplaceData = useMemo(
     () => resolveMarketplaceForDestination(selectedTrip?.destination),
     [selectedTrip?.destination]
   );
+
   const guideLanguageOptions = useMemo(() => {
     const allLanguages = marketplaceData.guides.flatMap((guide) => guide.languages || []);
     return ["Any", ...new Set(allLanguages)];
   }, [marketplaceData.guides]);
+
   const filteredGuides = useMemo(() => {
     return marketplaceData.guides.filter((guide) => {
-      if (guideFilters.language !== "Any" && !guide.languages.includes(guideFilters.language)) {
+      if (guideFilters.language !== "Any" && !guide.languages.includes(guideFilters.language))
         return false;
-      }
       if (guideFilters.priceRange !== "Any") {
         if (guideFilters.priceRange === "Budget" && guide.pricePerDay > 4000) return false;
         if (
           guideFilters.priceRange === "Standard" &&
           (guide.pricePerDay < 4000 || guide.pricePerDay > 5500)
-        ) {
+        )
           return false;
-        }
         if (guideFilters.priceRange === "Premium" && guide.pricePerDay < 5500) return false;
       }
-      if (guideFilters.minRating !== "Any" && guide.rating < Number(guideFilters.minRating)) {
+      if (
+        guideFilters.minRating !== "Any" &&
+        guide.rating < Number(guideFilters.minRating)
+      )
         return false;
-      }
       return true;
     });
   }, [guideFilters, marketplaceData.guides]);
+
   const selectedTripServices = selectedTrip
     ? tripServicesByTrip[selectedTrip.id] || { guide: null, vehicle: null }
     : { guide: null, vehicle: null };
@@ -624,7 +601,7 @@ function TravelPlanner() {
     });
   };
 
-  const handleAuthSubmit = (event) => {
+  const handleAuthSubmit = async (event) => {
     event.preventDefault();
     setAuthMessage("");
 
@@ -637,44 +614,44 @@ function TravelPlanner() {
       return;
     }
 
-    const users = getStoredUsers();
+    try {
+      if (authMode === "signup") {
+        if (!name) { setAuthMessage("Name is required for sign up."); return; }
 
-    if (authMode === "signup") {
-      if (!name) {
-        setAuthMessage("Name is required for sign up.");
-        return;
+        const signupRes = await fetch(`${AUTH_API}/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password, role: "traveler", interest: authForm.interest }),
+        });
+        const signupData = await signupRes.json();
+        if (!signupRes.ok) { setAuthMessage(signupData.message || "Sign up failed."); return; }
       }
-      if (users.some((user) => normalizeEmail(user.email) === email)) {
-        setAuthMessage("Account already exists. Please login.");
-        return;
-      }
-      const created = { name, email, password, interest: authForm.interest };
-      localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify([...users, created]));
-      const session = { name, email, interest: authForm.interest };
+
+      const loginRes = await fetch(`${AUTH_API}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const loginData = await loginRes.json();
+      if (!loginRes.ok) { setAuthMessage(loginData.message || "Invalid credentials."); return; }
+
+      const session = {
+        id: loginData.user.id,
+        name: loginData.user.name,
+        email: loginData.user.email,
+        role: loginData.user.role,
+        interest: loginData.user.interest || "Adventure",
+      };
       localStorage.setItem(LOCAL_SESSION_KEY, JSON.stringify(session));
       window.dispatchEvent(new Event(AUTH_EVENT));
       setAuthenticatedUser(session);
-      setToastMessage("Welcome aboard", `Account created for ${name}`);
-      return;
+      setToastMessage(
+        authMode === "signup" ? "Welcome aboard" : "Logged in",
+        authMode === "signup" ? `Account created for ${name}` : `Welcome back ${session.name}`
+      );
+    } catch {
+      setAuthMessage("Something went wrong. Please try again.");
     }
-
-    const matched = users.find(
-      (user) => normalizeEmail(user.email) === email && user.password === password
-    );
-    if (!matched) {
-      setAuthMessage("Invalid credentials. Sign up first if needed.");
-      return;
-    }
-
-    const session = {
-      name: matched.name,
-      email: normalizeEmail(matched.email),
-      interest: matched.interest || "Adventure",
-    };
-    localStorage.setItem(LOCAL_SESSION_KEY, JSON.stringify(session));
-    window.dispatchEvent(new Event(AUTH_EVENT));
-    setAuthenticatedUser(session);
-    setToastMessage("Logged in", `Welcome back ${session.name}`);
   };
 
   const handleLogout = () => {
@@ -718,13 +695,7 @@ function TravelPlanner() {
       if (!response.ok) throw new Error(data?.message || "Create group failed");
       replaceGroup(data);
       setHostModalOpen(false);
-      setHostForm({
-        destination: "",
-        totalCount: 5,
-        filledCount: 3,
-        startDate: "",
-        endDate: "",
-      });
+      setHostForm({ destination: "", totalCount: 5, filledCount: 3, startDate: "", endDate: "" });
       setToastMessage("Trip created", `Hosting ${destination}`);
     } catch (error) {
       setToastMessage("Action failed", error.message);
@@ -843,6 +814,8 @@ function TravelPlanner() {
     }
   };
 
+  // FIX: pass userEmail in socket message so server can echo it back
+  // and frontend can correctly identify "mine" messages
   const handleSendChat = (event) => {
     event.preventDefault();
     const message = chatInput.trim();
@@ -851,6 +824,7 @@ function TravelPlanner() {
       tripId: activeChatTripId,
       message,
       userName: authenticatedUser?.name || "Traveler",
+      userEmail: authenticatedUser?.email || "",
     });
     setChatInput("");
   };
@@ -873,10 +847,7 @@ function TravelPlanner() {
     if (!tripDetailId || !item || !canManageServices) return;
     setTripServicesByTrip((prev) => ({
       ...prev,
-      [tripDetailId]: {
-        ...(prev[tripDetailId] || {}),
-        [type]: item,
-      },
+      [tripDetailId]: { ...(prev[tripDetailId] || {}), [type]: item },
     }));
     setBookingIntent(null);
     setToastMessage(
@@ -897,17 +868,11 @@ function TravelPlanner() {
 
   const handleShareTrip = async (group) => {
     if (!group) return;
-    const shareText = `${group.destination} Â· ${formatCompactDateRange(
-      group.startDate,
-      group.endDate
-    )}`;
+    // FIX: was "Â·" (encoding corruption)
+    const shareText = `${group.destination} · ${formatCompactDateRange(group.startDate, group.endDate)}`;
     try {
       if (navigator.share) {
-        await navigator.share({
-          title: group.destination,
-          text: shareText,
-          url: window.location.href,
-        });
+        await navigator.share({ title: group.destination, text: shareText, url: window.location.href });
         return;
       }
       await navigator.clipboard.writeText(`${shareText} | ${window.location.href}`);
@@ -924,7 +889,7 @@ function TravelPlanner() {
   const renderStatusBadge = (status) => {
     if (status === "pending") return <span className="tp-badge waiting">Waiting Approval</span>;
     if (status === "accepted") return <span className="tp-badge accepted">Accepted</span>;
-    if (status === "declined") return <span className="tp-badge declined">Trip Full</span>;
+    if (status === "declined") return <span className="tp-badge declined">Declined</span>;
     return null;
   };
 
@@ -975,8 +940,9 @@ function TravelPlanner() {
               <small>{formatRelativeCreatedAt(group.createdAt)}</small>
             </div>
             <p>{formatTripTiming(group.startDate, group.endDate)} | {group.hostInterest}</p>
+            {/* FIX: was "Traveling with X strangers..." with garbled unicode bullets */}
             <p className="tp-emotion-line">
-              Traveling with {Math.max(group.filledCount, 1)} strangers who love adventures
+              Traveling with {Math.max(group.filledCount, 1)} people who love adventures
             </p>
           </div>
 
@@ -1004,7 +970,10 @@ function TravelPlanner() {
             <div className="tp-progress-head">
               <strong>{seatMessage}</strong>
             </div>
-            <div className={`tp-progress ${getSeatTone(ratio)}`} style={{ "--fill": `${progress}%` }}>
+            <div
+              className={`tp-progress ${getSeatTone(ratio)}`}
+              style={{ "--fill": `${progress}%` }}
+            >
               <span />
             </div>
           </div>
@@ -1064,20 +1033,14 @@ function TravelPlanner() {
             <button
               type="button"
               className={authMode === "login" ? "active" : ""}
-              onClick={() => {
-                setAuthMode("login");
-                setAuthMessage("");
-              }}
+              onClick={() => { setAuthMode("login"); setAuthMessage(""); }}
             >
               Login
             </button>
             <button
               type="button"
               className={authMode === "signup" ? "active" : ""}
-              onClick={() => {
-                setAuthMode("signup");
-                setAuthMessage("");
-              }}
+              onClick={() => { setAuthMode("signup"); setAuthMessage(""); }}
             >
               Sign Up
             </button>
@@ -1088,9 +1051,7 @@ function TravelPlanner() {
                 type="text"
                 placeholder="Name"
                 value={authForm.name}
-                onChange={(event) =>
-                  setAuthForm((prev) => ({ ...prev, name: event.target.value }))
-                }
+                onChange={(e) => setAuthForm((prev) => ({ ...prev, name: e.target.value }))}
                 required
               />
             ) : null}
@@ -1098,31 +1059,23 @@ function TravelPlanner() {
               type="email"
               placeholder="Email"
               value={authForm.email}
-              onChange={(event) =>
-                setAuthForm((prev) => ({ ...prev, email: event.target.value }))
-              }
+              onChange={(e) => setAuthForm((prev) => ({ ...prev, email: e.target.value }))}
               required
             />
             <input
               type="password"
               placeholder="Password"
               value={authForm.password}
-              onChange={(event) =>
-                setAuthForm((prev) => ({ ...prev, password: event.target.value }))
-              }
+              onChange={(e) => setAuthForm((prev) => ({ ...prev, password: e.target.value }))}
               required
             />
             {authMode === "signup" ? (
               <select
                 value={authForm.interest}
-                onChange={(event) =>
-                  setAuthForm((prev) => ({ ...prev, interest: event.target.value }))
-                }
+                onChange={(e) => setAuthForm((prev) => ({ ...prev, interest: e.target.value }))}
               >
                 {INTEREST_OPTIONS.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
+                  <option key={item} value={item}>{item}</option>
                 ))}
               </select>
             ) : null}
@@ -1144,6 +1097,7 @@ function TravelPlanner() {
           <span>{toast.subtitle}</span>
         </aside>
       ) : null}
+
       <div className="tp-tabs">
         {TAB_ITEMS.map((item) => (
           <button
@@ -1166,19 +1120,19 @@ function TravelPlanner() {
                 type="text"
                 placeholder="Search where to?"
                 value={heroQuery}
-                onChange={(event) => setHeroQuery(event.target.value)}
+                onChange={(e) => setHeroQuery(e.target.value)}
               />
               <input
                 type="text"
                 placeholder="Dates"
                 value={heroDates}
-                onChange={(event) => setHeroDates(event.target.value)}
+                onChange={(e) => setHeroDates(e.target.value)}
               />
               <input
                 type="number"
                 placeholder="Group Size"
                 value={heroGroupSize}
-                onChange={(event) => setHeroGroupSize(event.target.value)}
+                onChange={(e) => setHeroGroupSize(e.target.value)}
                 min={2}
               />
               <button type="button" className="tp-btn primary">
@@ -1201,22 +1155,20 @@ function TravelPlanner() {
                 type="text"
                 placeholder="Search destinations..."
                 value={searchQuery}
-                onChange={(event) => setSearchQuery(event.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </label>
             <div className="tp-filter-chips">
-              {["Budget < 5k", "Age 18-25", "Girls Only", "From Pune", "Verified"].map(
-                (chip) => (
-                  <button
-                    key={chip}
-                    type="button"
-                    className={selectedChips.has(chip) ? "active" : ""}
-                    onClick={() => toggleFilterChip(chip)}
-                  >
-                    {chip}
-                  </button>
-                )
-              )}
+              {["Budget < 5k", "Age 18-25", "Girls Only", "From Pune", "Verified"].map((chip) => (
+                <button
+                  key={chip}
+                  type="button"
+                  className={selectedChips.has(chip) ? "active" : ""}
+                  onClick={() => toggleFilterChip(chip)}
+                >
+                  {chip}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -1266,11 +1218,7 @@ function TravelPlanner() {
             <h3>Hosting</h3>
             <div className="tp-panel-actions">
               <span className="tp-badge waiting">{pendingHostRequests} pending requests</span>
-              <button
-                type="button"
-                className="tp-btn primary"
-                onClick={() => setHostModalOpen(true)}
-              >
+              <button type="button" className="tp-btn primary" onClick={() => setHostModalOpen(true)}>
                 Host a Trip
               </button>
               <button type="button" className="tp-btn secondary" onClick={handleLogout}>
@@ -1280,23 +1228,11 @@ function TravelPlanner() {
           </div>
           {myHostedGroups.length ? (
             myHostedGroups.map((group) => {
-              const pending = (group.joinRequests || []).filter(
-                (request) => request.status === "pending"
-              );
-              const accepted = (group.joinRequests || []).filter(
-                (request) => request.status === "accepted"
-              );
+              const pending = (group.joinRequests || []).filter((r) => r.status === "pending");
+              const accepted = (group.joinRequests || []).filter((r) => r.status === "accepted");
               const peopleGoing = [
-                {
-                  name: group.hostName,
-                  email: group.hostEmail || "Not shared",
-                  role: "Host",
-                },
-                ...accepted.map((request) => ({
-                  name: request.userName,
-                  email: request.userEmail,
-                  role: "Traveler",
-                })),
+                { name: group.hostName, email: group.hostEmail || "Not shared", role: "Host" },
+                ...accepted.map((r) => ({ name: r.userName, email: r.userEmail, role: "Traveler" })),
               ];
               return (
                 <article key={group.id} className="tp-host-card">
@@ -1342,9 +1278,7 @@ function TravelPlanner() {
                           <div key={request.id} className="tp-host-request-row">
                             <div>
                               <strong>{request.userName}</strong>
-                              <p>
-                                {request.userEmail} | {request.userInterest}
-                              </p>
+                              <p>{request.userEmail} | {request.userInterest}</p>
                             </div>
                             <div className="tp-host-request-actions">
                               <button
@@ -1352,12 +1286,7 @@ function TravelPlanner() {
                                 className="tp-btn primary"
                                 disabled={busy}
                                 onClick={() =>
-                                  handleReviewJoinRequest(
-                                    group.id,
-                                    request.id,
-                                    "accept",
-                                    group.destination
-                                  )
+                                  handleReviewJoinRequest(group.id, request.id, "accept", group.destination)
                                 }
                               >
                                 {reviewSubmittingByRequest[acceptKey] ? "Accepting..." : "Accept"}
@@ -1367,17 +1296,10 @@ function TravelPlanner() {
                                 className="tp-btn secondary"
                                 disabled={busy}
                                 onClick={() =>
-                                  handleReviewJoinRequest(
-                                    group.id,
-                                    request.id,
-                                    "decline",
-                                    group.destination
-                                  )
+                                  handleReviewJoinRequest(group.id, request.id, "decline", group.destination)
                                 }
                               >
-                                {reviewSubmittingByRequest[declineKey]
-                                  ? "Declining..."
-                                  : "Decline"}
+                                {reviewSubmittingByRequest[declineKey] ? "Declining..." : "Decline"}
                               </button>
                             </div>
                           </div>
@@ -1395,37 +1317,28 @@ function TravelPlanner() {
           )}
         </div>
       ) : null}
+
       {hostModalOpen ? (
-        <div
-          className="tp-modal-overlay"
-          role="presentation"
-          onClick={() => setHostModalOpen(false)}
-        >
+        <div className="tp-modal-overlay" role="presentation" onClick={() => setHostModalOpen(false)}>
           <form
             className="tp-modal"
             onSubmit={handleCreateGroup}
-            onClick={(event) => event.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <div className="tp-modal-head">
               <h3>Host a Trip</h3>
-              <button type="button" onClick={() => setHostModalOpen(false)}>
-                Close
-              </button>
+              <button type="button" onClick={() => setHostModalOpen(false)}>Close</button>
             </div>
             <label>
               Destination
               <select
                 value={hostForm.destination}
-                onChange={(event) =>
-                  setHostForm((prev) => ({ ...prev, destination: event.target.value }))
-                }
+                onChange={(e) => setHostForm((prev) => ({ ...prev, destination: e.target.value }))}
                 required
               >
                 <option value="">Choose destination</option>
                 {destinationOptions.map((destination) => (
-                  <option key={destination} value={destination}>
-                    {destination}
-                  </option>
+                  <option key={destination} value={destination}>{destination}</option>
                 ))}
               </select>
             </label>
@@ -1436,12 +1349,7 @@ function TravelPlanner() {
                   type="number"
                   min={2}
                   value={hostForm.totalCount}
-                  onChange={(event) =>
-                    setHostForm((prev) => ({
-                      ...prev,
-                      totalCount: Number(event.target.value),
-                    }))
-                  }
+                  onChange={(e) => setHostForm((prev) => ({ ...prev, totalCount: Number(e.target.value) }))}
                 />
               </label>
               <label>
@@ -1451,12 +1359,7 @@ function TravelPlanner() {
                   min={1}
                   max={hostForm.totalCount}
                   value={hostForm.filledCount}
-                  onChange={(event) =>
-                    setHostForm((prev) => ({
-                      ...prev,
-                      filledCount: Number(event.target.value),
-                    }))
-                  }
+                  onChange={(e) => setHostForm((prev) => ({ ...prev, filledCount: Number(e.target.value) }))}
                 />
               </label>
             </div>
@@ -1466,9 +1369,7 @@ function TravelPlanner() {
                 <input
                   type="date"
                   value={hostForm.startDate}
-                  onChange={(event) =>
-                    setHostForm((prev) => ({ ...prev, startDate: event.target.value }))
-                  }
+                  onChange={(e) => setHostForm((prev) => ({ ...prev, startDate: e.target.value }))}
                   required
                 />
               </label>
@@ -1478,16 +1379,12 @@ function TravelPlanner() {
                   type="date"
                   value={hostForm.endDate}
                   min={hostForm.startDate || undefined}
-                  onChange={(event) =>
-                    setHostForm((prev) => ({ ...prev, endDate: event.target.value }))
-                  }
+                  onChange={(e) => setHostForm((prev) => ({ ...prev, endDate: e.target.value }))}
                   required
                 />
               </label>
             </div>
-            <button type="submit" className="tp-btn primary">
-              Create Group
-            </button>
+            <button type="submit" className="tp-btn primary">Create Group</button>
           </form>
         </div>
       ) : null}
@@ -1551,23 +1448,17 @@ function TravelPlanner() {
       ) : null}
 
       {selectedTrip ? (
-        <div
-          className="tp-trip-details-overlay"
-          role="presentation"
-          onClick={handleCloseTripDetails}
-        >
-          <section className="tp-trip-details-modal" onClick={(event) => event.stopPropagation()}>
+        <div className="tp-trip-details-overlay" role="presentation" onClick={handleCloseTripDetails}>
+          <section className="tp-trip-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="tp-trip-details-head">
               <div className="tp-trip-title-wrap">
                 <h3>{selectedTrip.destination}</h3>
                 <p className="tp-trip-created">{formatRelativeCreatedAt(selectedTrip.createdAt)}</p>
                 <p className="tp-trip-location">
-                  <span aria-hidden="true">??</span>
-                  {getDestinationLocation(selectedTrip.destination)}
+                  📍 {getDestinationLocation(selectedTrip.destination)}
                 </p>
                 <p className="tp-trip-date-line">
-                  <span aria-hidden="true">??</span>
-                  {formatCompactDateRange(selectedTrip.startDate, selectedTrip.endDate)}
+                  📅 {formatCompactDateRange(selectedTrip.startDate, selectedTrip.endDate)}
                 </p>
               </div>
               <div className="tp-trip-head-actions">
@@ -1592,22 +1483,20 @@ function TravelPlanner() {
                 <h4>Important Details</h4>
                 <div className="tp-detail-grid">
                   <div className="tp-detail-item">
-                    <span className="tp-detail-label">?? Start</span>
+                    <span className="tp-detail-label">📅 Start</span>
                     <strong>{formatFullDate(selectedTrip.startDate)}</strong>
                   </div>
                   <div className="tp-detail-item">
-                    <span className="tp-detail-label">?? End</span>
+                    <span className="tp-detail-label">📅 End</span>
                     <strong>{formatFullDate(selectedTrip.endDate)}</strong>
                   </div>
                   <div className="tp-detail-item">
-                    <span className="tp-detail-label">?? Host</span>
+                    <span className="tp-detail-label">👤 Host</span>
                     <strong>{selectedTrip.hostName}</strong>
                   </div>
                   <div className="tp-detail-item">
-                    <span className="tp-detail-label">?? Seats</span>
-                    <strong>
-                      {selectedTrip.filledCount}/{selectedTrip.totalCount}
-                    </strong>
+                    <span className="tp-detail-label">💺 Seats</span>
+                    <strong>{selectedTrip.filledCount}/{selectedTrip.totalCount}</strong>
                   </div>
                 </div>
                 <div className="tp-seat-visual">
@@ -1616,23 +1505,22 @@ function TravelPlanner() {
                     style={{
                       "--fill": `${Math.min(
                         100,
-                        Math.round((selectedTrip.filledCount / Math.max(1, selectedTrip.totalCount)) * 100)
+                        Math.round(
+                          (selectedTrip.filledCount / Math.max(1, selectedTrip.totalCount)) * 100
+                        )
                       )}%`,
                     }}
                   >
                     <span />
                   </div>
                   <p className={`tp-seat-urgency ${getSeatsRemainingMeta(selectedTripSeatsLeft).tone}`}>
-                    {Array.from({ length: selectedTrip.totalCount }).map((_, index) => (
-                      <span key={index}>{index < selectedTrip.filledCount ? "??" : "?"}</span>
-                    ))}{" "}
                     {getSeatsRemainingMeta(selectedTripSeatsLeft).label}
                   </p>
                 </div>
               </article>
 
               <article className="tp-trip-detail-card">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+                <p style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b", margin: 0 }}>
                   Participants
                 </p>
                 <h4>People Coming</h4>
@@ -1654,10 +1542,9 @@ function TravelPlanner() {
                       <strong>{selectedTrip.hostName}</strong>
                       <p>
                         {(() => {
-                          const hostProfile = getTravelerProfile(
-                            selectedTrip.hostEmail || selectedTrip.hostName
-                          );
-                          return `Age ${hostProfile.age} Â· ${hostProfile.city} Â· ? ${hostProfile.rating}`;
+                          const hp = getTravelerProfile(selectedTrip.hostEmail || selectedTrip.hostName);
+                          // FIX: was "Age X Â· City Â· Rating" (encoding corruption)
+                          return `Age ${hp.age} · ${hp.city} · ⭐ ${hp.rating}`;
                         })()}
                       </p>
                     </div>
@@ -1671,7 +1558,7 @@ function TravelPlanner() {
                     </button>
                   </div>
                   {(selectedTrip.joinRequests || [])
-                    .filter((request) => request.status === "accepted")
+                    .filter((r) => r.status === "accepted")
                     .map((request) => (
                       <div key={request.id} className="tp-trip-person-row rich">
                         <span className="tp-avatar soft">{getInitials(request.userName)}</span>
@@ -1679,8 +1566,8 @@ function TravelPlanner() {
                           <strong>{request.userName}</strong>
                           <p>
                             {(() => {
-                              const traveler = getTravelerProfile(request.userEmail || request.userName);
-                              return `Age ${traveler.age} Â· ${traveler.city} Â· ? ${traveler.rating}`;
+                              const tp = getTravelerProfile(request.userEmail || request.userName);
+                              return `Age ${tp.age} · ${tp.city} · ⭐ ${tp.rating}`;
                             })()}
                           </p>
                         </div>
@@ -1730,30 +1617,32 @@ function TravelPlanner() {
             </div>
 
             <article className="tp-trip-detail-card">
-              <div className="mb-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+              <div style={{ marginBottom: "0.75rem" }}>
+                <p style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b", margin: 0 }}>
                   Services
                 </p>
-                <h4 className="text-lg font-bold text-slate-900">Tourist Guides & Local Services</h4>
-                <p className="mt-1 text-sm text-slate-600">
+                <h4 style={{ margin: "0.25rem 0 0", fontSize: "1.1rem", fontWeight: 700, color: "#0f172a" }}>
+                  Tourist Guides &amp; Local Services
+                </h4>
+                <p style={{ marginTop: "0.25rem", fontSize: "0.875rem", color: "#475569" }}>
                   Browse verified experts and local transport options for {selectedTrip.destination}.
                 </p>
-                <p className="mt-1 text-xs font-medium text-slate-500">
+                <p style={{ marginTop: "0.25rem", fontSize: "0.75rem", fontWeight: 500, color: "#64748b" }}>
                   {canManageServices
                     ? "You are the host. You can lock one guide and one vehicle selection."
                     : "Read-only view. Only host can modify services."}
                 </p>
               </div>
 
-              <div className="mb-3 grid gap-2 rounded-[16px] border border-slate-200 bg-white p-3 md:grid-cols-2">
-                <p className="text-sm font-medium text-slate-700">
+              <div style={{ display: "grid", gap: "0.5rem", borderRadius: "16px", border: "1px solid #e2e8f0", background: "#fff", padding: "0.75rem", marginBottom: "0.75rem", gridTemplateColumns: "1fr 1fr" }}>
+                <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "#334155", margin: 0 }}>
                   {selectedTripServices?.guide
-                    ? `?? ${selectedTripServices.guide.name} (Selected)`
+                    ? `✅ ${selectedTripServices.guide.name} (Selected)`
                     : "Guide: Not selected"}
                 </p>
-                <p className="text-sm font-medium text-slate-700">
+                <p style={{ fontSize: "0.875rem", fontWeight: 500, color: "#334155", margin: 0 }}>
                   {selectedTripServices?.vehicle
-                    ? `?? ${selectedTripServices.vehicle.type} (Selected)`
+                    ? `✅ ${selectedTripServices.vehicle.type} (Selected)`
                     : "Vehicle: Not selected"}
                 </p>
               </div>
@@ -1761,58 +1650,31 @@ function TravelPlanner() {
               <ServicesTabs activeTab={servicesActiveTab} onTabChange={setServicesActiveTab} />
 
               {servicesActiveTab === "guides" ? (
-                <div className="mt-4 grid gap-4">
-                  <div className="grid gap-2 rounded-[18px] border border-slate-200 bg-white p-3 md:grid-cols-3">
-                    <label className="grid gap-1 text-xs font-semibold text-slate-500">
-                      Language
-                      <select
-                        value={guideFilters.language}
-                        onChange={(event) =>
-                          setGuideFilters((prev) => ({ ...prev, language: event.target.value }))
-                        }
-                        className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700"
-                      >
-                        {guideLanguageOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <label className="grid gap-1 text-xs font-semibold text-slate-500">
-                      Price Range
-                      <select
-                        value={guideFilters.priceRange}
-                        onChange={(event) =>
-                          setGuideFilters((prev) => ({ ...prev, priceRange: event.target.value }))
-                        }
-                        className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700"
-                      >
-                        <option value="Any">Any</option>
-                        <option value="Budget">Budget</option>
-                        <option value="Standard">Standard</option>
-                        <option value="Premium">Premium</option>
-                      </select>
-                    </label>
-                    <label className="grid gap-1 text-xs font-semibold text-slate-500">
-                      Rating
-                      <select
-                        value={guideFilters.minRating}
-                        onChange={(event) =>
-                          setGuideFilters((prev) => ({ ...prev, minRating: event.target.value }))
-                        }
-                        className="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700"
-                      >
-                        <option value="Any">Any</option>
-                        <option value="4.5">4.5+</option>
-                        <option value="4.8">4.8+</option>
-                        <option value="4.9">4.9+</option>
-                      </select>
-                    </label>
+                <div style={{ marginTop: "1rem", display: "grid", gap: "1rem" }}>
+                  <div style={{ display: "grid", gap: "0.5rem", borderRadius: "18px", border: "1px solid #e2e8f0", background: "#fff", padding: "0.75rem", gridTemplateColumns: "repeat(3, 1fr)" }}>
+                    {["language", "priceRange", "minRating"].map((filterKey) => (
+                      <label key={filterKey} style={{ display: "grid", gap: "0.25rem", fontSize: "0.75rem", fontWeight: 700, color: "#64748b" }}>
+                        {filterKey === "language" ? "Language" : filterKey === "priceRange" ? "Price Range" : "Rating"}
+                        <select
+                          value={guideFilters[filterKey]}
+                          onChange={(e) => setGuideFilters((prev) => ({ ...prev, [filterKey]: e.target.value }))}
+                          style={{ borderRadius: "10px", border: "1px solid #e2e8f0", padding: "0.5rem 0.75rem", fontSize: "0.875rem", color: "#334155" }}
+                        >
+                          {filterKey === "language" &&
+                            guideLanguageOptions.map((opt) => <option key={opt} value={opt}>{opt}</option>)}
+                          {filterKey === "priceRange" && ["Any", "Budget", "Standard", "Premium"].map((opt) => (
+                            <option key={opt} value={opt}>{opt}</option>
+                          ))}
+                          {filterKey === "minRating" && ["Any", "4.5", "4.8", "4.9"].map((opt) => (
+                            <option key={opt} value={opt}>{opt === "Any" ? "Any" : `${opt}+`}</option>
+                          ))}
+                        </select>
+                      </label>
+                    ))}
                   </div>
 
                   {filteredGuides.length ? (
-                    <div className="grid gap-3 md:grid-cols-2">
+                    <div style={{ display: "grid", gap: "0.75rem", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
                       {filteredGuides.map((guide) => (
                         <GuideCard
                           key={guide.id}
@@ -1826,18 +1688,18 @@ function TravelPlanner() {
                       ))}
                     </div>
                   ) : (
-                    <div className="rounded-[18px] border border-dashed border-slate-300 bg-slate-50 p-5 text-center">
-                      <p className="text-sm font-semibold text-slate-700">
-                        No verified guides available yet for this destination.
+                    <div style={{ borderRadius: "18px", border: "1px dashed #cbd5e1", background: "#f8fafc", padding: "1.25rem", textAlign: "center" }}>
+                      <p style={{ fontSize: "0.875rem", fontWeight: 700, color: "#334155", margin: 0 }}>
+                        No verified guides available for this destination.
                       </p>
-                      <p className="mt-1 text-sm text-slate-500">
-                        Request a guide and weâ€™ll notify locals.
+                      <p style={{ marginTop: "0.25rem", fontSize: "0.875rem", color: "#64748b" }}>
+                        Request a guide and we'll notify locals.
                       </p>
                     </div>
                   )}
                 </div>
               ) : (
-                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                <div style={{ marginTop: "1rem", display: "grid", gap: "0.75rem", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
                   {marketplaceData.vehicles.map((vehicle) => (
                     <VehicleCard
                       key={vehicle.id}
@@ -1850,26 +1712,16 @@ function TravelPlanner() {
                   ))}
                 </div>
               )}
-
-              <div className="mt-4 grid gap-3 rounded-[18px] border border-slate-200 bg-white p-4 md:grid-cols-3">
-                <div className="rounded-xl bg-slate-50 p-3 text-center text-xs font-semibold text-slate-700">
-                  Government ID Verified
-                </div>
-                <div className="rounded-xl bg-slate-50 p-3 text-center text-xs font-semibold text-slate-700">
-                  Background Verified
-                </div>
-                <div className="rounded-xl bg-indigo-50 p-3 text-center text-xs font-semibold text-indigo-700">
-                  4.8+ Rating Highlight
-                </div>
-              </div>
             </article>
 
             <article className="tp-trip-detail-card">
-              <div className="mb-3">
-                <p className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">
+              <div style={{ marginBottom: "0.75rem" }}>
+                <p style={{ fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#64748b", margin: 0 }}>
                   Expenses
                 </p>
-                <h4 className="text-lg font-bold text-slate-900">Trip Service Costs</h4>
+                <h4 style={{ margin: "0.25rem 0 0", fontSize: "1.1rem", fontWeight: 700, color: "#0f172a" }}>
+                  Trip Service Costs
+                </h4>
               </div>
               <BookingSummary
                 services={selectedTripServices}
@@ -1900,9 +1752,7 @@ function TravelPlanner() {
       <aside className={`tp-chat ${activeChatTripId ? "open" : ""}`}>
         <header>
           <h4>{activeGroup ? `${activeGroup.destination} Chat` : "Trip Chat"}</h4>
-          <button type="button" onClick={() => setActiveChatTripId("")}>
-            Close
-          </button>
+          <button type="button" onClick={() => setActiveChatTripId("")}>Close</button>
         </header>
         <div className="tp-chat-messages" ref={chatMessagesRef}>
           {activeMessages.length ? (
@@ -1930,7 +1780,7 @@ function TravelPlanner() {
             type="text"
             placeholder="Write a message"
             value={chatInput}
-            onChange={(event) => setChatInput(event.target.value)}
+            onChange={(e) => setChatInput(e.target.value)}
             disabled={!activeChatTripId}
           />
           <button type="submit" disabled={!activeChatTripId || !chatInput.trim()}>
@@ -1943,10 +1793,3 @@ function TravelPlanner() {
 }
 
 export default TravelPlanner;
-
-
-
-
-
-
-

@@ -25,11 +25,7 @@ const bulkInsertPlaces = async (req, res) => {
         message: "Some records were skipped due to duplicate IDs"
       });
     }
-
-    res.status(500).json({
-      message: "Bulk insert failed",
-      error: error.message
-    });
+    res.status(500).json({ message: "Bulk insert failed", error: error.message });
   }
 };
 
@@ -37,7 +33,6 @@ const bulkInsertPlaces = async (req, res) => {
    BASIC CRUD
    ========================= */
 
-// GET all places
 const getPlaces = async (req, res) => {
   try {
     const places = await Place.find();
@@ -47,7 +42,6 @@ const getPlaces = async (req, res) => {
   }
 };
 
-// GET place by id
 const getPlace = async (req, res) => {
   try {
     const place = await Place.findOne({ id: Number(req.params.id) });
@@ -60,7 +54,6 @@ const getPlace = async (req, res) => {
   }
 };
 
-// GET reviews by place id
 const getPlaceReviews = async (req, res) => {
   try {
     const { sort = "newest" } = req.query;
@@ -85,7 +78,6 @@ const getPlaceReviews = async (req, res) => {
   }
 };
 
-// POST add review to place
 const addPlaceReview = async (req, res) => {
   try {
     const { name, rating, comment } = req.body;
@@ -112,7 +104,6 @@ const addPlaceReview = async (req, res) => {
     });
 
     await place.save();
-
     const createdReview = place.reviews[place.reviews.length - 1];
     res.status(201).json(createdReview);
   } catch (error) {
@@ -120,7 +111,6 @@ const addPlaceReview = async (req, res) => {
   }
 };
 
-// POST mark review as helpful
 const markReviewHelpful = async (req, res) => {
   try {
     const { id, reviewId } = req.params;
@@ -137,16 +127,12 @@ const markReviewHelpful = async (req, res) => {
     review.helpfulCount = Number(review.helpfulCount || 0) + 1;
     await place.save();
 
-    res.status(200).json({
-      reviewId,
-      helpfulCount: review.helpfulCount
-    });
+    res.status(200).json({ reviewId, helpfulCount: review.helpfulCount });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// CREATE place
 const createPlace = async (req, res) => {
   try {
     const place = await Place.create(req.body);
@@ -156,7 +142,6 @@ const createPlace = async (req, res) => {
   }
 };
 
-// UPDATE place
 const updatePlace = async (req, res) => {
   try {
     const place = await Place.findOneAndUpdate(
@@ -175,12 +160,9 @@ const updatePlace = async (req, res) => {
   }
 };
 
-// DELETE place
 const deletePlace = async (req, res) => {
   try {
-    const place = await Place.findOneAndDelete({
-      id: Number(req.params.id)
-    });
+    const place = await Place.findOneAndDelete({ id: Number(req.params.id) });
 
     if (!place) {
       return res.status(404).json({ message: "Place not found" });
@@ -192,7 +174,6 @@ const deletePlace = async (req, res) => {
   }
 };
 
-// DELETE all places
 const deleteAllPlaces = async (req, res) => {
   try {
     const result = await Place.deleteMany({});
@@ -206,10 +187,9 @@ const deleteAllPlaces = async (req, res) => {
 };
 
 /* =========================
-   EXPLORE-SPECIFIC APIs 🔥
+   EXPLORE-SPECIFIC APIs
    ========================= */
 
-// GET unique states
 const getStates = async (req, res) => {
   try {
     const states = await Place.distinct("state");
@@ -219,14 +199,12 @@ const getStates = async (req, res) => {
   }
 };
 
-// GET cities by state
 const getCities = async (req, res) => {
   try {
     const { state } = req.query;
     if (!state) {
       return res.status(400).json({ message: "State is required" });
     }
-
     const cities = await Place.find({ state }).distinct("city");
     res.json(cities);
   } catch (error) {
@@ -234,7 +212,6 @@ const getCities = async (req, res) => {
   }
 };
 
-// 🆕 GET cities by state WITH IMAGES (for city cards)
 const getCitiesWithImages = async (req, res) => {
   try {
     const { state } = req.query;
@@ -244,19 +221,8 @@ const getCitiesWithImages = async (req, res) => {
 
     const cities = await Place.aggregate([
       { $match: { state } },
-      {
-        $group: {
-          _id: "$city",
-          image: { $first: "$image" }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          city: "$_id",
-          image: 1
-        }
-      }
+      { $group: { _id: "$city", image: { $first: "$image" } } },
+      { $project: { _id: 0, city: "$_id", image: 1 } }
     ]);
 
     res.json(cities);
@@ -265,14 +231,12 @@ const getCitiesWithImages = async (req, res) => {
   }
 };
 
-// GET places by city
 const getPlacesByCity = async (req, res) => {
   try {
     const { city } = req.query;
     if (!city) {
       return res.status(400).json({ message: "City is required" });
     }
-
     const places = await Place.find({ city });
     res.json(places);
   } catch (error) {
@@ -280,42 +244,28 @@ const getPlacesByCity = async (req, res) => {
   }
 };
 
-// GET states with one image (for Explore boxes)
 const getStatesWithImages = async (req, res) => {
   try {
     const states = await Place.aggregate([
-      {
-        $group: {
-          _id: "$state",
-          image: { $first: "$image" }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          state: "$_id",
-          image: 1
-        }
-      }
+      { $group: { _id: "$state", image: { $first: "$image" } } },
+      { $project: { _id: 0, state: "$_id", image: 1 } }
     ]);
-
     res.status(200).json(states);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// 🆕 ENHANCED SEARCH with filters and sorting
+// FIX: category is a [String] array in the model — must use $elemMatch or $in, not equality
 const searchPlaces = async (req, res) => {
   try {
     const { q, rating, category, sort } = req.query;
-    
+
     if (!q) {
       return res.status(400).json({ message: "No query sent" });
     }
 
-    // Build search query
-    let query = {
+    const query = {
       $or: [
         { title: { $regex: q, $options: "i" } },
         { city: { $regex: q, $options: "i" } },
@@ -323,20 +273,17 @@ const searchPlaces = async (req, res) => {
       ]
     };
 
-    // 🔥 Filter by minimum rating (e.g., rating=4)
     if (rating) {
       query.rating = { $gte: Number(rating) };
     }
 
-    // 🔥 Filter by category (e.g., category=hidden-gem)
+    // FIX: was `query.category = category` which never matches an array field
     if (category) {
-      query.category = category;
+      query.category = { $in: [category] };
     }
 
-    // Execute search
     let places = await Place.find(query);
 
-    // 🔥 Apply sorting
     if (sort === "rating-high") {
       places.sort((a, b) => b.rating - a.rating);
     } else if (sort === "rating-low") {
@@ -350,10 +297,6 @@ const searchPlaces = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
-/* =========================
-   EXPORTS
-   ========================= */
 
 module.exports = {
   getPlaces,
