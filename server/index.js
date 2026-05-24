@@ -9,6 +9,7 @@ const placesRoute = require("./routes/places");
 const travelGroupsRoute = require("./routes/travelGroups");
 const authRoute = require("./routes/auth");
 const guidesRoute = require("./routes/guides");
+const adminRoute = require("./routes/admin");
 
 const TripMessage = require("./models/TripMessage");
 const TravelGroup = require("./models/TravelGroup");
@@ -23,10 +24,35 @@ const allowedOrigins = process.env.CLIENT_ORIGIN
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+app.post("/api/ai/trip-plan", async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) return res.status(400).json({ message: "Prompt required" });
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: "GEMINI_API_KEY not set in .env" });
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+
+    res.status(200).json({ text });
+  } catch (error) {
+    console.error("Gemini error:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
 app.use("/api/places", placesRoute);
 app.use("/api/travel-groups", travelGroupsRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/guides", guidesRoute);
+app.use("/api/admin", adminRoute);
 
 // FIX: Added userEmail to socket message so frontend can identify "mine" messages reliably
 const io = new Server(server, {

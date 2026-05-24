@@ -11,6 +11,9 @@ import Contact from "./contact.jsx"
 import Auth from "./auth.jsx"
 import Guides from "./guides.jsx"
 import GuideProfile from "./guideProfile.jsx"
+import GuideDashboard from "./guideDashboard.jsx"
+import Admin from "./Admin.jsx"
+import AiTripPlanner from "./Aitriplanner.jsx"
 
 // FIX: was "Navabar" (typo) — component export is named "Navbar"
 
@@ -30,6 +33,9 @@ function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/guides" element={<Guides />} />
         <Route path="/guide/:id" element={<GuideProfile />} />
+        <Route path="/guide-dashboard" element={<GuideDashboard />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/trip-planner" element={<AiTripPlanner />} />
       </Routes>
 
       <Footer />

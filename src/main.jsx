@@ -4,9 +4,19 @@ import './index.css'
 import App from './App.jsx';
 import { HashRouter } from "react-router-dom";
 
+if (!window.location.hash && window.location.pathname !== "/") {
+  const normalizedPath = window.location.pathname.replace(/\/+$/, "") || "/";
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.origin}${window.location.search}#${normalizedPath}`
+  );
+}
 
 createRoot(document.getElementById('root')).render(
-  <HashRouter>
-   <App />
-  </HashRouter>
+  <StrictMode>
+    <HashRouter>
+      <App />
+    </HashRouter>
+  </StrictMode>
 );

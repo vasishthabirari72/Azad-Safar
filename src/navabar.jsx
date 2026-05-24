@@ -14,6 +14,12 @@ const getSessionUser = () => {
     return {
       name: parsed.name || "Traveler",
       email: normalizeEmail(parsed.email),
+      interest: parsed.interest || "Adventure",
+      // role defaults to "traveler" for old sessions that predate the role field
+      role: parsed.role || "traveler",
+      id: parsed.id || null,
+      guideProfileId: parsed.guideProfileId || null,
+      guideStatus: parsed.guideStatus || null,
     };
   } catch {
     return null;
@@ -96,9 +102,15 @@ function Navbar() {
         <div className="premium-actions" ref={dropdownRef}>
           {user ? (
             <>
-              <Link to="/travel-partner" className="premium-host-cta">
-                Host a Trip
-              </Link>
+              {user.role === "guide" ? (
+                <Link to="/guide-dashboard" className="premium-host-cta">
+                  My Dashboard
+                </Link>
+              ) : (
+                <Link to="/travel-partner" className="premium-host-cta">
+                  Host a Trip
+                </Link>
+              )}
               <button
                 type="button"
                 className="premium-avatar"
@@ -108,15 +120,28 @@ function Navbar() {
               </button>
               {menuOpen ? (
                 <div className="premium-dropdown">
-                  <button type="button" onClick={() => goToTab("myTrips")}>
-                    My Trips
-                  </button>
-                  <button type="button" onClick={() => goToTab("requests")}>
-                    Requests
-                  </button>
-                  <button type="button" onClick={() => goToTab("hosting")}>
-                    Profile
-                  </button>
+                  {user.role === "guide" ? (
+                    <>
+                      <button type="button" onClick={() => { navigate("/guide-dashboard"); setMenuOpen(false); }}>
+                        Dashboard
+                      </button>
+                      <button type="button" onClick={() => { navigate("/guides"); setMenuOpen(false); }}>
+                        Browse Guides
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button type="button" onClick={() => goToTab("myTrips")}>
+                        My Trips
+                      </button>
+                      <button type="button" onClick={() => goToTab("requests")}>
+                        Requests
+                      </button>
+                      <button type="button" onClick={() => goToTab("hosting")}>
+                        Profile
+                      </button>
+                    </>
+                  )}
                   <button type="button" onClick={handleLogout}>
                     Logout
                   </button>

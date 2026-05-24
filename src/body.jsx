@@ -127,9 +127,9 @@ function Body() {
               }}
             >
               <option value="default">Default</option>
-              <option value="rating-high">⭐ Rating (High to Low)</option>
-              <option value="rating-low">⭐ Rating (Low to High)</option>
-              <option value="alphabetical">🔤 Alphabetical</option>
+              <option value="rating-high">Rating (High to Low)</option>
+              <option value="rating-low">Rating (Low to High)</option>
+              <option value="alphabetical">Alphabetical</option>
             </select>
           </div>
         </div>
@@ -181,9 +181,9 @@ function Body() {
               }}
             >
               <option value="default">Default</option>
-              <option value="rating-high">⭐ Rating (High to Low)</option>
-              <option value="rating-low">⭐ Rating (Low to High)</option>
-              <option value="alphabetical">🔤 Alphabetical</option>
+              <option value="rating-high">Rating (High to Low)</option>
+              <option value="rating-low">Rating (Low to High)</option>
+              <option value="alphabetical">Alphabetical</option>
             </select>
           </div>
         </div>

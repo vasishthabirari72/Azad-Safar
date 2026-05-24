@@ -101,12 +101,12 @@ function Explore() {
       {/* STATE CARDS */}
       {!selectedState && (
         <>
-          <h2 style={{ color: "white", marginBottom: "1.5rem" }}>Select a State</h2>
+          <h2 style={{ color: "#0f172a", marginBottom: "1.5rem" }}>Select a State</h2>
 
           {loadingStates ? (
             <div style={{ textAlign: "center", padding: "3rem" }}>
               <div className="spinner"></div>
-              <p style={{ color: "white", marginTop: "1rem" }}>Loading states...</p>
+              <p style={{ color: "#475569", marginTop: "1rem" }}>Loading states...</p>
             </div>
           ) : (
             <div className="img-row explore-grid">
@@ -148,17 +148,17 @@ function Explore() {
                 gap: "0.5rem",
               }}
             >
-              ← Back to States
+              Back to States
             </button>
-            <h2 style={{ color: "white", margin: 0 }}>{selectedState}</h2>
+            <h2 style={{ color: "#0f172a", margin: 0 }}>{selectedState}</h2>
           </div>
 
-          <h3 style={{ color: "white", marginBottom: "1.5rem" }}>Select a City</h3>
+          <h3 style={{ color: "#0f172a", marginBottom: "1.5rem" }}>Select a City</h3>
 
           {loadingCities ? (
             <div style={{ textAlign: "center", padding: "3rem" }}>
               <div className="spinner"></div>
-              <p style={{ color: "white", marginTop: "1rem" }}>Loading cities...</p>
+              <p style={{ color: "#475569", marginTop: "1rem" }}>Loading cities...</p>
             </div>
           ) : (
             <div className="img-row explore-grid">
@@ -200,9 +200,9 @@ function Explore() {
                 gap: "0.5rem",
               }}
             >
-              ← Back to Cities
+              Back to Cities
             </button>
-            <h2 style={{ color: "white", margin: 0 }}>
+            <h2 style={{ color: "#0f172a", margin: 0 }}>
               Places in {selectedCity}, {selectedState}
             </h2>
           </div>
@@ -210,10 +210,10 @@ function Explore() {
           {loadingPlaces ? (
             <div style={{ textAlign: "center", padding: "3rem" }}>
               <div className="spinner"></div>
-              <p style={{ color: "white", marginTop: "1rem" }}>Loading places...</p>
+              <p style={{ color: "#475569", marginTop: "1rem" }}>Loading places...</p>
             </div>
           ) : places.length === 0 ? (
-            <p style={{ color: "white" }}>No places found for {selectedCity}.</p>
+            <p style={{ color: "#475569" }}>No places found for {selectedCity}.</p>
           ) : (
             <div className="img-row">
               {places.map((place) => (

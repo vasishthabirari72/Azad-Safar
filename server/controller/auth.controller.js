@@ -1,44 +1,32 @@
+const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const GuideProfile = require("../models/GuideProfile");
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
+const SALT_ROUNDS = 10;
 
 /* =====================
    POST /api/auth/signup
-   Body: { name, email, password, role, interest,
-           // guide-only fields:
-           bio, photo, languages, pricePerDay, experienceYears, cities, states }
 ===================== */
 const signup = async (req, res) => {
   try {
     const {
-      name,
-      email,
-      password,
-      role = "traveler",
-      interest = "Adventure",
-      // guide profile fields
-      bio = "",
-      photo = "",
-      languages = [],
-      pricePerDay,
-      experienceYears = 0,
-      cities = [],
-      states = [],
+      name, email, password,
+      role = "traveler", interest = "Adventure",
+      bio = "", photo = "", languages = [],
+      pricePerDay, experienceYears = 0,
+      cities = [], states = [],
     } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "Name, email and password are required" });
     }
-
     if (String(password).length < 6) {
       return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
-
     if (!["traveler", "guide"].includes(role)) {
       return res.status(400).json({ message: "Role must be traveler or guide" });
     }
-
     if (role === "guide" && (!pricePerDay || Number(pricePerDay) < 0)) {
       return res.status(400).json({ message: "Guides must set a valid price per day" });
     }
@@ -48,19 +36,16 @@ const signup = async (req, res) => {
       return res.status(409).json({ message: "An account with this email already exists" });
     }
 
-    // NOTE: In production you must hash the password (bcrypt).
-    // For now storing plain text to match the existing localStorage pattern.
-    // When you add bcrypt: const hashed = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(String(password), SALT_ROUNDS);
+
     const user = await User.create({
       name: String(name).trim(),
       email: normalizeEmail(email),
-      password: String(password),
+      password: hashedPassword,
       role,
       interest,
     });
 
-    // If registering as a guide, create their profile immediately
-    // Status is "pending" — they won't appear in search until approved
     if (role === "guide") {
       await GuideProfile.create({
         userId: user._id,
@@ -92,7 +77,6 @@ const signup = async (req, res) => {
 
 /* =====================
    POST /api/auth/login
-   Body: { email, password }
 ===================== */
 const login = async (req, res) => {
   try {
@@ -107,12 +91,27 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Plain text comparison for now — replace with bcrypt.compare when you add hashing
-    if (user.password !== String(password)) {
+    // Supports both bcrypt hashed passwords and legacy plain text
+    // Plain text accounts get automatically upgraded on next login
+    let passwordMatch = false;
+    const isHashed = user.password.startsWith("$2b$") || user.password.startsWith("$2a$");
+
+    if (isHashed) {
+      passwordMatch = await bcrypt.compare(String(password), user.password);
+    } else {
+      // Legacy plain text comparison
+      passwordMatch = user.password === String(password);
+      if (passwordMatch) {
+        // Upgrade to bcrypt hash silently
+        user.password = await bcrypt.hash(String(password), SALT_ROUNDS);
+        await user.save();
+      }
+    }
+
+    if (!passwordMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // If user is a guide, include their profile status
     let guideProfileId = null;
     let guideStatus = null;
     if (user.role === "guide") {
@@ -142,19 +141,15 @@ const login = async (req, res) => {
 
 /* =====================
    GET /api/auth/me
-   Header: x-user-email (simple auth for now)
+   Header: x-user-email
 ===================== */
 const getMe = async (req, res) => {
   try {
     const email = normalizeEmail(req.headers["x-user-email"]);
-    if (!email) {
-      return res.status(401).json({ message: "Not authenticated" });
-    }
+    if (!email) return res.status(401).json({ message: "Not authenticated" });
 
     const user = await User.findOne({ email }).select("-password");
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     let guideProfileId = null;
     let guideStatus = null;

@@ -10,6 +10,7 @@ import {
   ServicesTabs,
   VehicleCard,
   resolveMarketplaceForDestination,
+  fetchMarketplaceForDestination,
 } from "./servicesMarketplace.jsx";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
@@ -86,6 +87,8 @@ const getSessionUser = () => {
       name: parsed.name || "Traveler",
       email: normalizeEmail(parsed.email),
       interest: parsed.interest || "Adventure",
+      role: parsed.role || "traveler",
+      id: parsed.id || null,
     };
   } catch {
     return null;
@@ -548,10 +551,16 @@ function TravelPlanner() {
       ]
     : [];
 
-  const marketplaceData = useMemo(
-    () => resolveMarketplaceForDestination(selectedTrip?.destination),
-    [selectedTrip?.destination]
-  );
+  const [marketplaceData, setMarketplaceData] = useState({ guides: [], vehicles: [] });
+
+  useEffect(() => {
+    if (!selectedTrip?.destination) {
+      setMarketplaceData(resolveMarketplaceForDestination(""));
+      return;
+    }
+    // Try real DB guides first, fall back to hardcoded data
+    fetchMarketplaceForDestination(selectedTrip.destination).then(setMarketplaceData);
+  }, [selectedTrip?.destination]);
 
   const guideLanguageOptions = useMemo(() => {
     const allLanguages = marketplaceData.guides.flatMap((guide) => guide.languages || []);

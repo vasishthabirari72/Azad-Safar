@@ -14,8 +14,11 @@ const {
   getPendingGuides,
 } = require("../controller/guide.controller");
 
-// IMPORTANT: static routes must come before /:id
+const { getMyProfile } = require("../controller/guide.controller");
+
+// static routes MUST come before /:id
 router.get("/pending", getPendingGuides);
+router.get("/mine", getMyProfile);
 
 router.get("/", getGuides);
 router.get("/:id", getGuide);

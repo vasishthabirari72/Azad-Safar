@@ -2687,3 +2687,105 @@ section iframe {
   background: #e8f1ff;
   border-color: #bcd1f8;
 }
+
+/* ===== Card Media + Fallbacks ===== */
+.card {
+  background: linear-gradient(135deg, #0b1b2a, #355f85);
+}
+
+.card-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.card-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 180ms ease;
+}
+
+.card--pending .card-media img {
+  opacity: 0;
+}
+
+.card-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(53, 95, 133, 0.85),
+    rgba(102, 126, 234, 0.35),
+    rgba(53, 95, 133, 0.85)
+  );
+  background-size: 200% 100%;
+  animation: card-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes card-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.card-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 1rem;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.92);
+  background:
+    radial-gradient(800px circle at 25% 10%, rgba(102, 126, 234, 0.25), transparent 40%),
+    linear-gradient(135deg, #0b1b2a, #1b3a57);
+}
+
+.card-fallback-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.10);
+  position: relative;
+}
+
+.card-fallback-icon::before {
+  content: "";
+  position: absolute;
+  inset: 12px 10px 14px 10px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.62);
+}
+
+.card-fallback-icon::after {
+  content: "";
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  width: 18px;
+  height: 10px;
+  border-left: 2px solid rgba(255, 255, 255, 0.62);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.62);
+  transform: skewX(-18deg) rotate(-6deg);
+}
+
+.card-fallback-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.show-more-btn {
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}

@@ -444,3 +444,25 @@ module.exports = {
   sendMessage,
   getPendingGuides,
 };
+
+const getMyProfile = async (req, res) => {
+  try {
+    const email = normalizeEmail(req.headers["x-user-email"]);
+    if (!email) return res.status(401).json({ message: "Not authenticated" });
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+    if (user.role !== "guide") return res.status(403).json({ message: "Only guide accounts have a guide profile" });
+    const profile = await GuideProfile.findOne({ userId: user._id }).populate("userId", "name email");
+    if (!profile) return res.status(404).json({ message: "Guide profile not found" });
+    const [pending, confirmed, completed] = await Promise.all([
+      GuideBooking.countDocuments({ guideId: profile._id, status: "pending" }),
+      GuideBooking.countDocuments({ guideId: profile._id, status: "confirmed" }),
+      GuideBooking.countDocuments({ guideId: profile._id, status: "completed" }),
+    ]);
+    res.status(200).json({ ...profile.toObject(), bookingSummary: { pending, confirmed, completed } });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports.getMyProfile = getMyProfile;
