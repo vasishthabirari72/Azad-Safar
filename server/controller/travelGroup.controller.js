@@ -18,6 +18,25 @@ const getTravelGroups = async (req, res) => {
   }
 };
 
+const getTravelGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid group id" });
+    }
+
+    const group = await TravelGroup.findById(id);
+    if (!group) {
+      return res.status(404).json({ message: "Group does not exist" });
+    }
+
+    res.status(200).json(group);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 const createTravelGroup = async (req, res) => {
   try {
     const {
@@ -377,6 +396,7 @@ const getTripMessages = async (req, res) => {
 
 module.exports = {
   getTravelGroups,
+  getTravelGroup,
   createTravelGroup,
   updateTravelGroup,
   joinTravelGroup,

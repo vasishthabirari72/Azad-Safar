@@ -3,6 +3,7 @@ const router = express.Router();
 
 const {
   getTravelGroups,
+  getTravelGroup,
   createTravelGroup,
   updateTravelGroup,
   joinTravelGroup,
@@ -15,6 +16,7 @@ const {
 } = require("../controller/travelGroup.controller");
 
 router.get("/", getTravelGroups);
+router.get("/:id", getTravelGroup);
 router.post("/", createTravelGroup);
 router.patch("/:id", updateTravelGroup);
 router.post("/:id/join", joinTravelGroup);

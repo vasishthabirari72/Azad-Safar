@@ -7,25 +7,40 @@ const User = require("../models/User");
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
 
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 /* =====================
    GET /api/guides
-   Query: city, state, language, minRating, maxPrice, status
+   Query: q, where, city, state, language, minRating, maxPrice, status
    Returns only active guides by default
 ===================== */
 const getGuides = async (req, res) => {
   try {
-    const { city, state, language, minRating, maxPrice } = req.query;
+    const { q, where, city, state, language, minRating, maxPrice } = req.query;
 
     const filter = { status: "active" };
 
-    if (city) {
-      filter.cities = { $regex: city, $options: "i" };
+    // Free-text search on guide name (User.name)
+    if (q) {
+      const users = await User.find({ name: { $regex: escapeRegex(q), $options: "i" } }).select("_id");
+      const userIds = users.map((u) => u._id);
+      if (userIds.length === 0) return res.status(200).json([]);
+      filter.userId = { $in: userIds };
     }
-    if (state) {
-      filter.states = { $regex: state, $options: "i" };
+
+    // Single "where" field matches either city or state (OR), for a simpler traveler search UI.
+    // If "where" is provided, we ignore the legacy "city"/"state" params to avoid AND-ing them.
+    if (where) {
+      filter.$or = [
+        { cities: { $regex: escapeRegex(where), $options: "i" } },
+        { states: { $regex: escapeRegex(where), $options: "i" } },
+      ];
+    } else {
+      if (city) filter.cities = { $regex: escapeRegex(city), $options: "i" };
+      if (state) filter.states = { $regex: escapeRegex(state), $options: "i" };
     }
     if (language) {
-      filter.languages = { $regex: language, $options: "i" };
+      filter.languages = { $regex: escapeRegex(language), $options: "i" };
     }
     if (minRating) {
       filter.rating = { $gte: Number(minRating) };

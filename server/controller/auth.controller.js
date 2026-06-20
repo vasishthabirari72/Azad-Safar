@@ -1,6 +1,18 @@
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const GuideProfile = require("../models/GuideProfile");
+
+const RESET_TOKEN_EXPIRES_MS = 60 * 60 * 1000; // 1 hour
+
+function makeTransporter() {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) return null;
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  });
+}
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
 const SALT_ROUNDS = 10;
@@ -175,4 +187,99 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, getMe };
+/* ================================
+   POST /api/auth/forgot-password
+   Body: { email }
+================================ */
+const forgotPassword = async (req, res) => {
+  try {
+    const email = normalizeEmail(req.body.email);
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await User.findOne({ email });
+    // Always return 200 so we don't expose whether the email exists
+    if (!user) return res.status(200).json({ message: "If that email exists, a reset link has been sent." });
+
+    const rawToken = crypto.randomBytes(32).toString("hex");
+    const hashedToken = crypto.createHash("sha256").update(rawToken).digest("hex");
+
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = new Date(Date.now() + RESET_TOKEN_EXPIRES_MS);
+    await user.save();
+
+    const clientOrigin = process.env.CLIENT_ORIGIN
+      ? process.env.CLIENT_ORIGIN.split(",")[0].trim()
+      : "http://localhost:5173";
+    const resetUrl = `${clientOrigin}/reset-password?token=${rawToken}`;
+
+    const transporter = makeTransporter();
+    if (transporter) {
+      await transporter.sendMail({
+        from: `"Azaad Safar" <${process.env.EMAIL_USER}>`,
+        to: user.email,
+        subject: "Reset your Azaad Safar password",
+        html: `
+          <div style="font-family:sans-serif;max-width:520px;margin:0 auto">
+            <h2 style="color:#0f172a">Reset your password</h2>
+            <p>Hi ${user.name},</p>
+            <p>Click the button below to reset your password. This link expires in <strong>1 hour</strong>.</p>
+            <a href="${resetUrl}"
+               style="display:inline-block;margin:16px 0;padding:12px 24px;background:linear-gradient(135deg,#4f46e5,#6366f1);color:#fff;border-radius:10px;text-decoration:none;font-weight:700">
+              Reset Password
+            </a>
+            <p style="color:#64748b;font-size:0.85rem">
+              If you didn't request this, you can safely ignore this email.
+            </p>
+            <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0">
+            <p style="color:#94a3b8;font-size:0.75rem">Azaad Safar · India</p>
+          </div>
+        `,
+      });
+    } else {
+      // Dev mode — no SMTP configured; log the link so you can test locally
+      console.log(`[DEV] Password reset link for ${email}:\n${resetUrl}`);
+    }
+
+    res.status(200).json({ message: "If that email exists, a reset link has been sent." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/* ================================
+   POST /api/auth/reset-password
+   Body: { token, password }
+================================ */
+const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return res.status(400).json({ message: "Token and new password are required" });
+    }
+    if (String(password).length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const hashedToken = crypto.createHash("sha256").update(String(token)).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Reset link is invalid or has expired." });
+    }
+
+    user.password = await bcrypt.hash(String(password), SALT_ROUNDS);
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully. You can now log in." });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { signup, login, getMe, forgotPassword, resetPassword };

@@ -10,6 +10,7 @@ const travelGroupsRoute = require("./routes/travelGroups");
 const authRoute = require("./routes/auth");
 const guidesRoute = require("./routes/guides");
 const adminRoute = require("./routes/admin");
+const contactRoute = require("./routes/contact");
 
 const TripMessage = require("./models/TripMessage");
 const TravelGroup = require("./models/TravelGroup");
@@ -22,7 +23,7 @@ const allowedOrigins = process.env.CLIENT_ORIGIN
   : "*";
 
 app.use(cors({ origin: allowedOrigins }));
-app.use(express.json());
+app.use(express.json({ limit: "25mb" }));
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
@@ -53,6 +54,7 @@ app.use("/api/travel-groups", travelGroupsRoute);
 app.use("/api/auth", authRoute);
 app.use("/api/guides", guidesRoute);
 app.use("/api/admin", adminRoute);
+app.use("/api/contact", contactRoute);
 
 // FIX: Added userEmail to socket message so frontend can identify "mine" messages reliably
 const io = new Server(server, {

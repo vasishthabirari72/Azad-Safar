@@ -80,10 +80,19 @@ const placeSchema = new mongoose.Schema(
       required: true,
       trim: true
     },
+    slug: {
+      type: String,
+      trim: true,
+      index: true
+    },
     state: {
       type: String,
       required: true,
       index: true
+    },
+    district: {
+      type: String,
+      trim: true
     },
     city: {
       type: String,
@@ -99,7 +108,15 @@ const placeSchema = new mongoose.Schema(
     category: {
       type: [String],
       enum: ["high-rated", "recommended", "hidden-gem"],
-      required: true
+      default: []
+    },
+    destinationCategory: {
+      type: String,
+      trim: true
+    },
+    subcategory: {
+      type: String,
+      trim: true
     },
     image: {
       type: String,
@@ -108,9 +125,38 @@ const placeSchema = new mongoose.Schema(
     image2: {
       type: String
     },
+    imageUrl: {
+      type: String,
+      trim: true
+    },
     description: {
       type: String,
       required: true
+    },
+    latitude: {
+      type: Number
+    },
+    longitude: {
+      type: Number
+    },
+    bestSeason: {
+      type: [String],
+      default: []
+    },
+    difficulty: {
+      type: String,
+      trim: true
+    },
+    entryFee: {
+      type: String,
+      trim: true
+    },
+    tags: {
+      type: [String],
+      default: []
+    },
+    popularityScore: {
+      type: Number
     },
     nearbyPlaces: {
       type: [nearbyPlaceSchema],

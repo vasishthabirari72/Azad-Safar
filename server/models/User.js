@@ -31,6 +31,8 @@ const userSchema = new mongoose.Schema(
       enum: ["Adventure", "Spiritual", "Luxury", "Budget"],
       default: "Adventure",
     },
+    resetPasswordToken: { type: String, default: null },
+    resetPasswordExpires: { type: Date, default: null },
   },
   { timestamps: true }
 );

@@ -1,23 +1,54 @@
 const Place = require("../models/Place");
+const { normalizePlace, normalizePlacesPayload } = require("../utils/placeNormalizer");
+
+const escapeRegex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /* =========================
    BULK INSERT
    ========================= */
 const bulkInsertPlaces = async (req, res) => {
   try {
-    const { places } = req.body;
+    const places = normalizePlacesPayload(req.body);
 
     if (!Array.isArray(places)) {
       return res.status(400).json({
-        message: "Request body must contain an array called 'places'"
+        message: "Request body must be an array or contain an array called 'places'"
       });
     }
 
-    const result = await Place.insertMany(places, { ordered: false });
+    const lastPlace = await Place.findOne().sort({ id: -1 }).select("id");
+    const firstGeneratedId = Number(lastPlace?.id || 0) + 1;
+    const normalizedPlaces = places.map((place, index) =>
+      normalizePlace(place, firstGeneratedId + index)
+    );
+
+    if (!normalizedPlaces.length) {
+      return res.status(400).json({ message: "No places were provided" });
+    }
+
+    const operations = normalizedPlaces.map((place) => {
+      const { id, slug, ...setFields } = place;
+      const filter = slug ? { slug } : { id };
+
+      return {
+        updateOne: {
+          filter,
+          update: {
+            $set: { ...setFields, slug },
+            $setOnInsert: { id }
+          },
+          upsert: true
+        }
+      };
+    });
+
+    const result = await Place.bulkWrite(operations, { ordered: false });
 
     res.status(201).json({
-      message: "Bulk insert completed",
-      insertedCount: result.length
+      message: "Bulk import completed",
+      insertedCount: result.upsertedCount || 0,
+      updatedCount: result.modifiedCount || 0,
+      matchedCount: result.matchedCount || 0
     });
   } catch (error) {
     if (error.code === 11000) {
@@ -35,7 +66,44 @@ const bulkInsertPlaces = async (req, res) => {
 
 const getPlaces = async (req, res) => {
   try {
-    const places = await Place.find();
+    const { featured, limit, category, page, sort } = req.query;
+    const query = featured === "true" ? { category: { $in: ["high-rated", "recommended", "hidden-gem"] } } : {};
+
+    if (category) {
+      query.category = { $in: [category] };
+    }
+
+    const pageSize = Math.min(Number(limit) || (featured === "true" ? 60 : 20), 200);
+
+    // Paginated mode — only when `page` param is explicitly provided
+    if (page !== undefined) {
+      const sortMap = {
+        "rating-high":  { rating: -1, popularityScore: -1, title: 1 },
+        "rating-low":   { rating: 1, title: 1 },
+        "alphabetical": { title: 1 },
+      };
+      const sortOrder = sortMap[sort] || { rating: -1, popularityScore: -1, title: 1 };
+      const currentPage = Math.max(Number(page) || 1, 1);
+      const skip = (currentPage - 1) * pageSize;
+
+      const [places, total] = await Promise.all([
+        Place.find(query).sort(sortOrder).skip(skip).limit(pageSize),
+        Place.countDocuments(query),
+      ]);
+
+      return res.status(200).json({
+        places,
+        total,
+        page: currentPage,
+        totalPages: Math.ceil(total / pageSize),
+        limit: pageSize,
+      });
+    }
+
+    // Legacy mode — return plain array (all other callers unchanged)
+    const placesQuery = Place.find(query).sort({ rating: -1, popularityScore: -1, title: 1 });
+    if (pageSize > 0) placesQuery.limit(pageSize);
+    const places = await placesQuery;
     res.status(200).json(places);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -135,7 +203,8 @@ const markReviewHelpful = async (req, res) => {
 
 const createPlace = async (req, res) => {
   try {
-    const place = await Place.create(req.body);
+    const lastPlace = await Place.findOne().sort({ id: -1 }).select("id");
+    const place = await Place.create(normalizePlace(req.body, Number(lastPlace?.id || 0) + 1));
     res.status(201).json(place);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -256,42 +325,92 @@ const getStatesWithImages = async (req, res) => {
   }
 };
 
-// FIX: category is a [String] array in the model — must use $elemMatch or $in, not equality
 const searchPlaces = async (req, res) => {
   try {
     const { q, rating, category, sort } = req.query;
 
-    if (!q) {
+    if (!q || !String(q).trim()) {
       return res.status(400).json({ message: "No query sent" });
     }
 
-    const query = {
+    // Tokenize: each word must appear in at least one field (cap at 6 words)
+    const rawWords = String(q).trim().split(/\s+/).filter(Boolean).slice(0, 6);
+    const safeWords = rawWords.map(escapeRegex);
+    const safeQ = escapeRegex(String(q).trim());
+
+    const wordFilters = safeWords.map((word) => ({
       $or: [
-        { title: { $regex: q, $options: "i" } },
-        { city: { $regex: q, $options: "i" } },
-        { state: { $regex: q, $options: "i" } }
-      ]
-    };
+        { title: { $regex: word, $options: "i" } },
+        { city: { $regex: word, $options: "i" } },
+        { state: { $regex: word, $options: "i" } },
+        { district: { $regex: word, $options: "i" } },
+        { description: { $regex: word, $options: "i" } },
+        { destinationCategory: { $regex: word, $options: "i" } },
+        { subcategory: { $regex: word, $options: "i" } },
+        { tags: { $regex: word, $options: "i" } },
+      ],
+    }));
 
-    if (rating) {
-      query.rating = { $gte: Number(rating) };
+    const matchStage = { $and: wordFilters };
+    if (rating) matchStage.rating = { $gte: Number(rating) };
+    if (category) matchStage.category = { $in: [category] };
+
+    // Helpers for aggregation scoring
+    const str = (field) => ({ $ifNull: [`$${field}`, ""] });
+    const tagHit = (word) => ({
+      $gt: [
+        {
+          $size: {
+            $filter: {
+              input: { $ifNull: ["$tags", []] },
+              as: "t",
+              cond: { $regexMatch: { input: "$$t", regex: word, options: "i" } },
+            },
+          },
+        },
+        0,
+      ],
+    });
+
+    // Build score: full-phrase matches score highest, per-word matches score less
+    const scoreComponents = [
+      { $cond: [{ $regexMatch: { input: str("title"), regex: safeQ, options: "i" } }, 20, 0] },
+      { $cond: [{ $regexMatch: { input: str("city"),  regex: safeQ, options: "i" } }, 12, 0] },
+    ];
+
+    for (const word of safeWords) {
+      scoreComponents.push(
+        { $cond: [{ $regexMatch: { input: str("title"),               regex: word, options: "i" } }, 10, 0] },
+        { $cond: [{ $regexMatch: { input: str("city"),                regex: word, options: "i" } }, 6,  0] },
+        { $cond: [{ $regexMatch: { input: str("state"),               regex: word, options: "i" } }, 4,  0] },
+        { $cond: [{ $regexMatch: { input: str("destinationCategory"), regex: word, options: "i" } }, 3,  0] },
+        { $cond: [{ $regexMatch: { input: str("subcategory"),         regex: word, options: "i" } }, 3,  0] },
+        { $cond: [tagHit(word), 3, 0] },
+        { $cond: [{ $regexMatch: { input: str("description"),         regex: word, options: "i" } }, 1,  0] },
+      );
     }
 
-    // FIX: was `query.category = category` which never matches an array field
-    if (category) {
-      query.category = { $in: [category] };
-    }
+    // Quality boost from native signals
+    scoreComponents.push(
+      { $multiply: [{ $ifNull: ["$rating", 0] }, 1.5] },
+      { $multiply: [{ $ifNull: ["$popularityScore", 0] }, 0.02] },
+    );
 
-    let places = await Place.find(query);
+    const sortStage =
+      sort === "rating-high"  ? { rating: -1, _score: -1 } :
+      sort === "rating-low"   ? { rating: 1 } :
+      sort === "alphabetical" ? { title: 1 } :
+                                { _score: -1, rating: -1 };
 
-    if (sort === "rating-high") {
-      places.sort((a, b) => b.rating - a.rating);
-    } else if (sort === "rating-low") {
-      places.sort((a, b) => a.rating - b.rating);
-    } else if (sort === "alphabetical") {
-      places.sort((a, b) => a.title.localeCompare(b.title));
-    }
+    const pipeline = [
+      { $match: matchStage },
+      { $addFields: { _score: { $add: scoreComponents } } },
+      { $sort: sortStage },
+      { $limit: 80 },
+      { $project: { _score: 0 } },
+    ];
 
+    const places = await Place.aggregate(pipeline);
     res.status(200).json(places);
   } catch (error) {
     res.status(500).json({ message: error.message });
